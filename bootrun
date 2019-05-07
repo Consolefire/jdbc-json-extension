@@ -1,0 +1,4 @@
+DIR=$(pwd)
+
+$DIR/mvnw spring-boot:run -Psample
+

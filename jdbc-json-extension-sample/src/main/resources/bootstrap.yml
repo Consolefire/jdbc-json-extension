@@ -1,0 +1,23 @@
+server:
+  port: ${SERVER_PORT:17070}
+
+logging:
+  level: 
+    com.cf.jdbc: debug
+    
+spring:
+  application:
+    name: ${APP_NAME:jdbc-json-ext}
+  cloud:
+    config:
+      enabled: false
+    discovery:
+      enabled: false
+
+context:
+  config:
+    classpath: true
+    datasource: /context/datasource.cfg.json
+    fetchplan: /context/fetchplan.cfg.json
+  exec:
+    logOnly: false
