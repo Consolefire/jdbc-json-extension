@@ -9,7 +9,38 @@
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>ConsoleFire > JDBC JSON Extension</name>
+	<description>
+		`jdbc-json-extension` is to fetch data from RDBMS in JSON format. The data is structured the in the same relation structure of the Tables relationships in the database. The fetch is pre-planned using a `FetchPlan` configuration. The execution is multithreaded tree pattern where it starts from the `root` table with supplied filter parameters. The subsequent nodes (tables) are fetched as the `One-to-*` relationship defined from the root tables.
+	</description>
 
+	<licenses>
+		<license>
+			<name>Apache License Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<organization>
+		<name>Consolefire</name>
+		<url>http://consolefire.com</url>
+	</organization>
+
+	<developers>
+		<developer>
+			<name>Sabuj Das</name>
+			<email>sabuj.das@gmail.com</email>
+		</developer>
+	</developers>
+	<scm>
+		<connection>scm:git:git://github.com/Consolefire/jdbc-json-extension</connection>
+		<developerConnection>scm:git:ssh://github.com:Consolefire/jdbc-json-extension.git</developerConnection>
+		<url>https://github.com/Consolefire/jdbc-json-extension/tree/master</url>
+	</scm>
+	<issueManagement>
+		<system>GitHub Issues</system>
+		<url>https://github.com/Consolefire/jdbc-json-extension/issues</url>
+	</issueManagement>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -107,7 +138,10 @@
 		<!-- /\/\ JUnit 5 Dependencies /\/\ -->
 	</dependencies>
 
+
+
 	<build>
+
 		<plugins>
 			<plugin>
 				<artifactId>maven-site-plugin</artifactId>
@@ -186,7 +220,7 @@
 		</profile>
 
 		<profile>
-			<id>release</id>
+			<id>github</id>
 			<activation>
 				<activeByDefault>false</activeByDefault>
 			</activation>
@@ -194,6 +228,44 @@
 				<module>jdbc-json-extension-common</module>
 				<module>jdbc-json-extension-core</module>
 			</modules>
+			<distributionManagement>
+				<repository>
+					<id>internal</id>
+					<url>file://${project.build.directory}/mvn-repo</url>
+				</repository>
+			</distributionManagement>
+			<build>
+
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.6</version>
+						<configuration>
+							<keyname>${consolefire.gpg.keyname}</keyname>
+							<passphraseServerId>${consolefire.gpg.keyname}</passphraseServerId>
+						</configuration>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-deploy-plugin</artifactId>
+						<version>2.8.2</version>
+						<configuration>
+							<altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>
+						</configuration>
+					</plugin>
+
+				</plugins>
+			</build>
 
 		</profile>
 
