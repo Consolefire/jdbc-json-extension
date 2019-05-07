@@ -37,7 +37,7 @@ fi
 
 if [ -z "$RELEASE_TYPE" ] ; then
 	echo "No release type provided, setting to SNAPSHOT"
-	RELEASE_TYPE=$SNAPSHOT
+	RELEASE_TYPE=""
 fi
 
 echo "Changing [ $ACTION ] version with release type: [ $RELEASE_TYPE ]"
