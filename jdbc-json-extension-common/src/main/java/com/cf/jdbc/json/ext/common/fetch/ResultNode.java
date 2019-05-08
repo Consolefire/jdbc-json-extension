@@ -1,10 +1,10 @@
 package com.cf.jdbc.json.ext.common.fetch;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.cf.jdbc.json.ext.common.model.Node;
+import com.cf.jdbc.json.ext.common.model.ResultDataSet;
 
 import lombok.Getter;
 import lombok.NonNull;
@@ -14,7 +14,7 @@ import lombok.Setter;
 @Setter
 public class ResultNode extends Node {
 
-    private Map<String, Object> properties;
+    private ResultDataSet resultDataSet;
 
     public ResultNode(@NonNull String name, ResultNode parent, List<? extends ResultNode> children) {
         super(name, parent, children);
@@ -36,17 +36,29 @@ public class ResultNode extends Node {
         getChildren().add(result);
     }
 
-    public boolean hasProperties() {
-        return null != properties && !properties.isEmpty();
+
+    public boolean hasData() {
+        return null != resultDataSet && resultDataSet.getRowCount() > 0;
     }
 
-    public void addProperty(ResultNode child) {
-        if (null != child) {
-            if (null == properties) {
-                properties = new HashMap<>();
-            }
-            properties.put(child.getName(), child.getProperties());
+    public boolean isCollection() {
+        return hasData() && resultDataSet.getRowCount() > 1;
+    }
+
+    public ResultNode getChildByName(String name) {
+        if (!hasChildren()) {
+            return null;
         }
+        return getChildren().parallelStream().filter(node -> name.equals(node.getName())).map(x -> (ResultNode) x)
+                .findFirst().orElse(null);
+    }
+
+    public List<ResultNode> getChildrenByName(String name) {
+        if (!hasChildren()) {
+            return null;
+        }
+        return getChildren().parallelStream().filter(node -> name.equals(node.getName())).map(x -> (ResultNode) x)
+                .collect(Collectors.toList());
     }
 
 }

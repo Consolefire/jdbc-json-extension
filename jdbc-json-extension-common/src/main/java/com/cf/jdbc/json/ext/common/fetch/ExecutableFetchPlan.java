@@ -1,8 +1,10 @@
 package com.cf.jdbc.json.ext.common.fetch;
 
+import java.util.Map;
 import java.util.concurrent.Executor;
 
 import com.cf.jdbc.json.ext.common.cfg.model.FetchPlanConfig;
+import com.cf.jdbc.json.ext.common.dto.ResponseBuilder;
 import com.cf.jdbc.json.ext.common.ex.IllegalConfigurationException;
 import com.cf.jdbc.json.ext.common.exec.ActionExecutor;
 import com.cf.jdbc.json.ext.common.exec.ExecutableAction;
@@ -21,7 +23,7 @@ public abstract class ExecutableFetchPlan<S extends ActionNode, E extends Execut
     }
 
     @Override
-    public ResultNode execute(ExecutionContext executionContext) {
+    public Map<String, Object> execute(ExecutionContext executionContext) {
         if (configured.get() == false) {
             // throw error
         }
@@ -29,8 +31,11 @@ public abstract class ExecutableFetchPlan<S extends ActionNode, E extends Execut
         if (null == executableAction) {
             throw new IllegalConfigurationException();
         }
-        executableAction.updateContext(executionContext);
-        return actionExecutor.execute(executableAction);
+        executableAction.setExecutionContext(executionContext);
+        final ResponseBuilder responseBuilder =
+                new ResponseBuilder(fetchPlanConfig.getFetch().getRoot(), fetchPlanConfig.getDatabaseMetaData());
+        actionExecutor.execute(responseBuilder, executableAction);
+        return responseBuilder.build();
     }
 
     protected abstract E buildExecutableAction(ExecutionContext executionContext);

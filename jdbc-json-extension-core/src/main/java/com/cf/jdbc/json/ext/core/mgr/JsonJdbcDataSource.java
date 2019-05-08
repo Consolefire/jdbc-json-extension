@@ -1,5 +1,7 @@
 package com.cf.jdbc.json.ext.core.mgr;
 
+import java.util.Map;
+
 import javax.sql.DataSource;
 
 import com.cf.jdbc.json.ext.common.cfg.DataSourceFactory;
@@ -21,7 +23,7 @@ public class JsonJdbcDataSource extends AbstractJdbcJsonDataSource {
 
 
     @Override
-    public Response<ResultNode> query(QueryRequest queryRequest) {
+    public Response<Map<String, Object>> query(QueryRequest queryRequest) {
         DataSource dataSource = dataSourceFactory.getDataSource(queryRequest.getDataSourceName());
         if (null == dataSource) {
             log.warn("No datasource with name: {}", queryRequest.getDataSourceName());
@@ -34,7 +36,7 @@ public class JsonJdbcDataSource extends AbstractJdbcJsonDataSource {
         }
         ExecutionContext executionContext =
                 new ExecutionContext(dataSource, fetchPlan.getDatabaseMetaData(), queryRequest.getParameters());
-        ResultNode resultNode = fetchPlan.execute(executionContext);
+        Map<String, Object> resultNode = fetchPlan.execute(executionContext);
         return new Response<>(resultNode);
     }
 
