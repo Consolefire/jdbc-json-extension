@@ -1,5 +1,6 @@
 package com.cf.jdbc.json.ext.common.fetch;
 
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.cf.jdbc.json.ext.common.cfg.ValidationSupport;
@@ -39,7 +40,7 @@ public abstract class FetchPlan implements ValidationSupport {
         return fetchPlanConfig.getKey();
     }
 
-    public abstract ResultNode execute(ExecutionContext executionContext);
+    public abstract Map<String, Object> execute(ExecutionContext executionContext);
 
     public DatabaseMetaData getDatabaseMetaData() {
         return fetchPlanConfig.getDatabaseMetaData();
