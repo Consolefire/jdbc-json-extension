@@ -78,4 +78,33 @@ public class ResultDataSet {
         });
         return rowMap;
     }
+
+    public Object getColumnValue(String columnName) {
+        int index = columnIndexMap.get(columnName);
+        return valueAt(0, index);
+    }
+
+    public Object valueAt(int rowNumber, int columnIndex) {
+        return data.get(rowNumber)[columnIndex];
+    }
+
+    public ResultDataSet copyWithoutData() {
+        ResultDataSet dataSet = new ResultDataSet(columnCount);
+        dataSet.alias = this.alias;
+        this.columnIndexMap.forEach((name, index) -> {
+            dataSet.setColumnIndex(name, index);
+        });
+
+        return dataSet;
+    }
+
+    public ResultDataSet copyWithRow(int index) {
+        ResultDataSet dataSet = copyWithoutData();
+        dataSet.addRow(this.data.get(index));
+        return dataSet;
+    }
+
+    public boolean isEmpty() {
+        return data.isEmpty();
+    }
 }

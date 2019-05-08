@@ -1,6 +1,170 @@
 [
   {
-    "name": "SAKILA.FETCH_FILMS_BY_ID",
+    "name": "SAKILA.SIMPLE_FETCH_FILMS_BY_ID",
+    "qualifiers": [],
+    "select": {
+      "includes": [],
+      "excludes": [
+        "last_update"
+      ]
+    },
+    "fetch": {
+      "root": "film",
+      "parameters": [
+        "film_id"
+      ]
+    },
+    "enableJoin": false,
+    "databaseMetaData": {
+      "schema": "sakila",
+      "scanMode": "REFRESH",
+      "tables": [
+        {
+          "name": "film",
+          "columns": [
+            {
+              "name": "film_id"
+            },
+            {
+              "name": "title"
+            },
+            {
+              "name": "description"
+            },
+            {
+              "name": "release_year"
+            },
+            {
+              "name": "language_id"
+            },
+            {
+              "name": "original_language_id"
+            },
+            {
+              "name": "rental_duration"
+            },
+            {
+              "name": "rental_rate"
+            },
+            {
+              "name": "length"
+            },
+            {
+              "name": "replacement_cost"
+            },
+            {
+              "name": "rating"
+            },
+            {
+              "name": "special_features"
+            }
+          ],
+          "references": {
+            "filmActors": {
+              "collection": true,
+              "table": "film_actor",
+              "column": "film_id",
+              "referenceTo": "film_id"
+            }
+          }
+        },
+        {
+          "name": "film_actor",
+          "columns": [
+            {
+              "name": "actor_id"
+            },
+            {
+              "name": "film_id"
+            },
+            {
+              "name": "last_update"
+            }
+          ],
+          "references": {
+            "actor": {
+              "collection": false,
+              "table": "actor",
+              "column": "actor_id",
+              "referenceTo": "actor_id"
+            }
+          }
+        },
+        {
+          "name": "actor",
+          "columns": [
+            {
+              "name": "actor_id"
+            },
+            {
+              "name": "first_name"
+            },
+            {
+              "name": "last_name"
+            },
+            {
+              "name": "last_update"
+            }
+          ]
+        },
+        {
+          "name": "film_category",
+          "columns": [
+            {
+              "name": "film_id"
+            },
+            {
+              "name": "category_id"
+            },
+            {
+              "name": "last_update"
+            }
+          ],
+          "references": {
+            "category": {
+              "collection": false,
+              "table": "category",
+              "column": "category_id",
+              "referenceTo": "category_id"
+            }
+          }
+        },
+        {
+          "name": "category",
+          "columns": [
+            {
+              "name": "name"
+            },
+            {
+              "name": "category_id"
+            },
+            {
+              "name": "last_update"
+            }
+          ]
+        },
+        {
+          "name": "inventory",
+          "columns": [
+            {
+              "name": "inventory_id"
+            },
+            {
+              "name": "film_id"
+            },
+            {
+              "name": "store_id"
+            },
+            {
+              "name": "last_update"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "SAKILA.DEEP_FETCH_FILMS_BY_ID",
     "qualifiers": [],
     "select": {
       "includes": [],

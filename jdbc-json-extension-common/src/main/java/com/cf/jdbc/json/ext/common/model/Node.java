@@ -54,5 +54,7 @@ public abstract class Node {
         return name;
     }
 
-
+    public boolean hasChildren() {
+        return null != children && !children.isEmpty();
+    }
 }

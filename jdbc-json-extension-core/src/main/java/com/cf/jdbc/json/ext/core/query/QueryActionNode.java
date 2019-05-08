@@ -1,15 +1,14 @@
 package com.cf.jdbc.json.ext.core.query;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.cf.jdbc.json.ext.common.cfg.meta.DatabaseMetaData;
 import com.cf.jdbc.json.ext.common.cfg.meta.TableMetaData;
-import com.cf.jdbc.json.ext.common.fetch.ResultNode;
 import com.cf.jdbc.json.ext.common.model.ActionNode;
 import com.cf.jdbc.json.ext.common.query.ParameterExtractor;
 import com.cf.jdbc.json.ext.common.query.Query;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -35,10 +34,6 @@ public class QueryActionNode extends ActionNode {
 
     public void addChild(QueryActionNode queryNode) {
         getChildren().add(queryNode);
-    }
-
-    public List<ResultNode> getResults(ResultNode root) {
-        return null;
     }
 
     public String getExecutableSql(Map<String, Object> params) {

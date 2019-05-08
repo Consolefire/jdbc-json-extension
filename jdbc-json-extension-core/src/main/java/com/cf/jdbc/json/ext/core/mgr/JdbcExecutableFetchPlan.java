@@ -52,7 +52,7 @@ public class JdbcExecutableFetchPlan extends ExecutableFetchPlan<QueryActionNode
 
     private ExecutableQueryAction configureExecutionGraph(ExecutionContext executionContext, QueryActionNode rootNode) {
         ExecutableQueryAction rootAction = new ExecutableQueryAction(rootNode);
-        rootAction.setExecutionContext(executionContext);
+        rootAction.setExecutionContext(executionContext.copy());
         rootAction.setQueryExecutor(queryExecutor);
         configureExecutionGraph(executionContext, rootNode, rootAction);
         return rootAction;
@@ -63,7 +63,7 @@ public class JdbcExecutableFetchPlan extends ExecutableFetchPlan<QueryActionNode
         if (null != queryRoot.getChildren() && !queryRoot.getChildren().isEmpty()) {
             for (Node child : queryRoot.getChildren()) {
                 ExecutableQueryAction childAction = new ExecutableQueryAction((QueryActionNode) child);
-                childAction.setExecutionContext(executionContext);
+                childAction.setExecutionContext(executionContext.copy());
                 childAction.setParentAction(actionRoot);
                 childAction.setQueryExecutor(queryExecutor);
                 childAction.setIndegree(1);
@@ -97,7 +97,7 @@ public class JdbcExecutableFetchPlan extends ExecutableFetchPlan<QueryActionNode
                     Set<String> parameters = new HashSet<>();
                     parameters.add(ref.getColumn());
                     QueryActionNode refNode = new QueryActionNode(key, databaseMetaData, tableMetaData,
-                            ParameterExtractor.PARENT_RESULT_PARAMETER_EXTRACTOR, parameters,
+                            ParameterExtractor.PARENT_RESULT_DATA_SET_PARAMETER_EXTRACTOR, parameters,
                             createQueryWithReference(ref.getTable(), parameters, key, ref));
                     refNode.setParent(rootNode);
                     rootNode.addChild(refNode);

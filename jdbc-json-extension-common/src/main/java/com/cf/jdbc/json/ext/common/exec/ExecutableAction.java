@@ -16,16 +16,17 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public abstract class ExecutableAction<A extends ActionNode, R extends ResultNode> implements Callable<R> {
+public abstract class ExecutableAction<A extends ActionNode, R extends ResultNode> implements Callable<List<R>> {
 
     @Getter
     private final A sourceNode;
     @Getter
-    private R resultNode;
+    @Setter
+    private R parentResult;
     @Getter
     @Setter
-    private ExecutionContext executionContext;
-    private ExecutableAction<A, R> parentAction;
+    protected ExecutionContext executionContext;
+    protected ExecutableAction<A, R> parentAction;
     private final List<ExecutableAction<A, R>> nextActions;
     private CountDownLatch dependencyLatch;
     private int indegree;
@@ -72,22 +73,24 @@ public abstract class ExecutableAction<A extends ActionNode, R extends ResultNod
     }
 
     @Override
-    public R call() throws Exception {
+    public List<R> call() throws Exception {
+        List<R> list = new ArrayList<>();
         try {
             dependencyLatch.await();
             beforeCall(executionContext, parentAction);
-            this.resultNode = doInCall(executionContext, sourceNode);
-            afterCall(executionContext, parentAction, this.resultNode);
+            R result = doInCall(executionContext, sourceNode);
+            list = afterCall(executionContext, parentAction, result);
             markComplete();
         } catch (NoValidQueryParamsFoundException exception) {
             log.warn(exception.getMessage(), exception);
             return null;
         }
-        return this.resultNode;
+        return list;
     }
 
 
-    protected abstract void afterCall(ExecutionContext executionContext, ExecutableAction<A, R> parentAction, R result);
+    protected abstract List<R> afterCall(ExecutionContext executionContext, ExecutableAction<A, R> parentAction,
+            R result);
 
     protected abstract void beforeCall(ExecutionContext executionContext, ExecutableAction<A, R> parentAction);
 
@@ -124,7 +127,14 @@ public abstract class ExecutableAction<A extends ActionNode, R extends ResultNod
         return null != nextActions && !nextActions.isEmpty();
     }
 
+    protected synchronized <X extends ExecutableAction<A, R>> void replaceNextExecutableActions(List<X> list) {
+        this.nextActions.clear();
+        this.nextActions.addAll(list);
+    }
+
     public abstract <X extends ExecutableAction<A, R>> List<X> getNextExecutableActions();
+
+    public abstract <X extends ExecutableAction<A, R>> List<X> getNextExecutableActions(@NonNull R parent);
 
     protected List<? extends ExecutableAction<A, R>> getNextActions() {
         return nextActions;
@@ -142,5 +152,6 @@ public abstract class ExecutableAction<A extends ActionNode, R extends ResultNod
         this.indegree = indegree;
     }
 
-    public abstract void updateContext(ExecutionContext executionContext);
+
+    public abstract ExecutableAction<A, R> copy();
 }

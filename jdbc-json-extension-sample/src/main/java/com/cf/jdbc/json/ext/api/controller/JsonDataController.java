@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cf.jdbc.json.ext.common.ds.JsonDataSource;
 import com.cf.jdbc.json.ext.common.dto.QueryRequest;
 import com.cf.jdbc.json.ext.common.dto.Response;
-import com.cf.jdbc.json.ext.common.fetch.ResultNode;
 
 @RestController
 @RequestMapping(value = "/api/data")
@@ -24,7 +23,7 @@ public class JsonDataController {
     private JsonDataSource jsonDataSource;
 
     @GetMapping
-    public ResponseEntity<Response<ResultNode>> fetchData(
+    public ResponseEntity<Response<Map<String, Object>>> fetchData(
             @RequestParam(name = "ds", required = true) String dataSourceName,
             @RequestParam(name = "fp", required = true) String fetchPlanName,
             @RequestParam(name = "param", required = true) String paramName,
@@ -33,7 +32,7 @@ public class JsonDataController {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put(paramName, value);
         queryRequest.setParameters(parameters);
-        Response<ResultNode> response = jsonDataSource.query(queryRequest);
+        Response<Map<String, Object>> response = jsonDataSource.query(queryRequest);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

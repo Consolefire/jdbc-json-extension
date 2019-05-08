@@ -7,9 +7,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 
+import com.cf.jdbc.json.ext.common.dto.ResponseBuilder;
 import com.cf.jdbc.json.ext.common.exec.ActionExecutor;
 import com.cf.jdbc.json.ext.common.fetch.ResultNode;
 import com.cf.jdbc.json.ext.core.query.QueryActionNode;
+
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -20,17 +23,24 @@ public class QueryNodeExecutor extends ActionExecutor<QueryActionNode, ResultNod
     }
 
     @Override
-    protected ResultNode executeNode(ExecutableQueryAction task) {
-        CompletionService<ResultNode> completionService = getCompletionService(1);
-        ResultNode resultNode = new ResultNode(task.getSourceNode().getName());
-        Future<ResultNode> resultFuture = submitTask(task, completionService);
+    protected void executeNode(@NonNull final ResponseBuilder responseBuilder,
+            @NonNull final ExecutableQueryAction task) {
+        CompletionService<List<ResultNode>> completionService = getCompletionService(1);
+        Future<List<ResultNode>> resultFuture = submitTask(task, completionService);
         try {
-            resultNode = resultFuture.get();
-            if (resultFuture.isDone() && null != resultNode && resultNode.hasProperties()) {
-                if (task.hasNext()) {
-                    List<ResultNode> children = executeNodes(task.getNextExecutableActions());
-                    if (null != children) {
-                        updateRelations(resultNode, children);
+            List<ResultNode> resultNodes = resultFuture.get();
+            if (resultFuture.isDone()) {
+                if (null != resultNodes && !resultNodes.isEmpty()) {
+                    if (resultNodes.size() > 1) {
+                        throw new UnsupportedOperationException("Multi-row root fetch not supported");
+                    }
+
+                    ResultNode resultNode = resultNodes.get(0);
+                    responseBuilder.setRootData(resultNode.getResultDataSet());
+                    if (task.hasNext()) {
+                        List<ExecutableQueryAction> nextExecutableActions =
+                                task.getNextExecutableActions(responseBuilder.getRootResultNode());
+                        executeNodes(responseBuilder, nextExecutableActions);
                     }
                 }
             }
@@ -38,47 +48,45 @@ public class QueryNodeExecutor extends ActionExecutor<QueryActionNode, ResultNod
             log.error(exception.getMessage(), exception);
             cancelTask(resultFuture);
         }
-        return resultNode;
     }
 
-
     @Override
-    protected List<ResultNode> executeNodes(List<ExecutableQueryAction> tasks) {
-        CompletionService<ResultNode> completionService = getCompletionService(tasks.size());
-        List<Future<ResultNode>> results = submitTasks(tasks, completionService);
-        List<ResultNode> resultNodes = new ArrayList<>();
+    protected void executeNodes(@NonNull final ResponseBuilder responseBuilder,
+            @NonNull List<ExecutableQueryAction> tasks) {
+        CompletionService<List<ResultNode>> completionService = getCompletionService(tasks.size());
+        List<Future<List<ResultNode>>> resultFutures = submitTasks(tasks, completionService);
         try {
-            for (int i = 0; i < tasks.size(); i++) {
+            for (int i = 0; i < resultFutures.size(); i++) {
+                Future<List<ResultNode>> future = resultFutures.get(i);
+                // completionService.take();
                 ExecutableQueryAction task = tasks.get(i);
-                Future<ResultNode> future = completionService.take();
-                ResultNode result = future.get();
-                if (future.isDone() && null != result && result.hasProperties()) {
-                    resultNodes.add(result);
-                    if (task.hasNext()) {
-                        List<ResultNode> children = executeNodes(task.getNextExecutableActions());
-                        if (null != children) {
-                            updateRelations(result, children);
-                        }
+                List<ResultNode> results = future.get();
+                if (future.isDone()) {
+                    if (null != results && !results.isEmpty()) {
+                        List<ExecutableQueryAction> nextExecutableActions = new ArrayList<>();
+                        results.forEach(resultNode -> {
+                            if (null != resultNode && resultNode.hasData()) {
+                                String name = resultNode.getName();
+                                log.debug("Action: [{}], result of: [{}]", task.getActionName(), name);
+                                responseBuilder.setResult(task.getParentResult(), resultNode);
+                                if (task.hasNext()) {
+                                    List<ExecutableQueryAction> nexts = task.getNextExecutableActions(resultNode);
+                                    if (null != nexts) {
+                                        nextExecutableActions.addAll(nexts);
+                                    }
+                                }
+                            }
+                        });
+                        executeNodes(responseBuilder, nextExecutableActions);
                     }
                 }
             }
         } catch (InterruptedException | ExecutionException exception) {
-            cancelTasks(results);
+            log.error(exception.getMessage(), exception);
+            cancelTasks(resultFutures);
         }
-        return resultNodes;
     }
 
-    @Override
-    protected List<ResultNode> buildResultNode(ResultNode root, ResultNode result) {
-        List<ResultNode> list = new ArrayList<>();
-        list.add(root);
-        return list;
-    }
 
-    private void updateRelations(ResultNode resultNode, List<ResultNode> children) {
-        children.forEach(child -> {
-            child.setParent(resultNode);
-        });
-        resultNode.setChildren(children);
-    }
+
 }

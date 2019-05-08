@@ -79,6 +79,8 @@ public class JdbcJsonExtensionAppConfig {
         ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
         threadPoolTaskExecutor.setThreadGroup(threadGroup);
         threadPoolTaskExecutor.setCorePoolSize(5);
+        threadPoolTaskExecutor.setKeepAliveSeconds(20);
+        threadPoolTaskExecutor.setWaitForTasksToCompleteOnShutdown(true);
         threadPoolTaskExecutor.setQueueCapacity(20);
         threadPoolTaskExecutor.setMaxPoolSize(10);
         threadPoolTaskExecutor.setThreadNamePrefix(toThreadName());

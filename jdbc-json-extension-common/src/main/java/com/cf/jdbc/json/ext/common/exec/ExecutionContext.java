@@ -1,6 +1,7 @@
 package com.cf.jdbc.json.ext.common.exec;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.sql.DataSource;
@@ -8,6 +9,7 @@ import javax.sql.DataSource;
 import com.cf.jdbc.json.ext.common.cfg.meta.DatabaseMetaData;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 
 @Getter
@@ -29,13 +31,22 @@ public class ExecutionContext {
         this.sourceParameters = Collections.unmodifiableMap(sourceParameters);
     }
 
-
     public ExecutionContext copy() {
-        ExecutionContext context = new ExecutionContext(dataSource, databaseMetaData, sourceParameters);
-        return context;
+        return new ExecutionContext(dataSource, databaseMetaData,
+                this.sourceParameters);
     }
 
-    public ExecutionContext copyWithParameters(Map<String, Object> parameters) {
+    public ExecutionContext copyWithParameters(@NonNull Map<String, Object> parameters) {
+        parameters.putAll(sourceParameters);
+        Map<String, Object> params = new HashMap<>();
+        parameters.entrySet().forEach(entry -> {
+            params.put(entry.getKey(), entry.getValue());
+        });
+        this.sourceParameters.entrySet().forEach(entry -> {
+            if (!parameters.containsKey(entry.getKey())) {
+                params.put(entry.getKey(), entry.getValue());
+            }
+        });
         ExecutionContext context = new ExecutionContext(dataSource, databaseMetaData, parameters);
         return context;
     }
