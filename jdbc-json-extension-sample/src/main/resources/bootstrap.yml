@@ -16,8 +16,8 @@ spring:
 
 context:
   config:
-    classpath: true
-    datasource: /context/datasource.cfg.json
-    fetchplan: /context/fetchplan.cfg.json
+    classpath: ${CXT_CONFIG_CLASSPATH:true}
+    datasource: ${CXT_CONFIG_DATA_SOURCE:/context/datasource.cfg.json}
+    fetchplan: ${CXT_CONFIG_FETCH_PLAN:/context/fetchplan.cfg.json}
   exec:
     logOnly: false
