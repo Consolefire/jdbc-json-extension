@@ -1,0 +1,30 @@
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0 http://maven.apache.org/xsd/assembly-2.0.0.xsd">
+
+	<id>${project.artifactId}</id>
+
+	<fileSets>
+		<fileSet>
+			<outputDirectory>/</outputDirectory>
+			<directory>${project.build.directory}</directory>
+			<includes>
+				<include>${project.artifactId}-${project.version}.jar</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<outputDirectory>scripts</outputDirectory>
+			<directory>${CONFIG_ROOT}/docker</directory>
+			<includes>
+				<include>entrypoint.sh</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<outputDirectory>config/logger</outputDirectory>
+			<directory>${CONFIG_ROOT}/docker</directory>
+			<includes>
+				<include>log4j2.xml</include>
+			</includes>
+		</fileSet>
+	</fileSets>
+</assembly>

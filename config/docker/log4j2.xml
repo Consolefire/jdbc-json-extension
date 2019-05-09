@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+
+	<conversionRule conversionWord="clr"
+		converterClass="org.springframework.boot.logging.log4j2.ColorConverter" />
+	<conversionRule conversionWord="ex"
+		converterClass="org.springframework.boot.logging.log4j2.ThrowableProxyConverter" />
+	<conversionRule conversionWord="wex"
+		converterClass="org.springframework.boot.logging.log4j2.WhitespaceThrowableProxyConverter" />
+	<conversionRule conversionWord="wEx"
+		converterClass="org.springframework.boot.logging.log4j2.ExtendedWhitespaceThrowableProxyConverter" />
+
+
+	<Properties>
+		<Property name="PID">????</Property>
+		<Property name="LOG_EXCEPTION_CONVERSION_WORD">%xwEx</Property>
+		<Property name="LOG_LEVEL_PATTERN">%5p</Property>
+		<Property name="LOG_DATEFORMAT_PATTERN">yyyy-MM-dd HH:mm:ss.SSS</Property>
+		<Property name="CONSOLE_LOG_PATTERN">%blue{${sys:PID}} %blue{&lt;~} %d{HH:mm:ss.SSS} %highlight{%-5p} [%style{%X{X-B3-TraceId}}{Green}, %style{%X{X-B3-SpanId}}{Blue}, %style{%X{X-B3-ParentSpanId}}{White}, %style{%X{X-Span-Export}}{Cyan}] %style{[%t]}{Magenta} %highlight{%C{1.}:%L} %blue{~>} %m${sys:LOG_EXCEPTION_CONVERSION_WORD:-%throwable}%n
+        </Property>
+        <Property name="FILE_LOG_PATTERN">${sys:PID} &lt;~ %d{yyyy-MM-dd HH:mm:ss.SSS} %-5p [%X{X-B3-TraceId}, %X{X-B3-SpanId}, %X{X-B3-ParentSpanId:-}, %X{X-Span-Export:-}] [%t] %C{1.}:%L ~> %m${sys:LOG_EXCEPTION_CONVERSION_WORD:-%throwable}%n
+        </Property>
+	</Properties>
+	
+	<Appenders>
+		<Console name="APPENDER_CONSOLE" target="SYSTEM_OUT" follow="true">
+			<PatternLayout pattern="${sys:CONSOLE_LOG_PATTERN}" />
+		</Console>
+		
+		
+	</Appenders>
+	
+	<Loggers>
+		<Logger name="org.apache.catalina.startup.DigesterFactory"
+			level="error" />
+		<Logger name="org.apache.catalina.util.LifecycleBase" level="error" />
+		<Logger name="org.apache.coyote.http11.Http11NioProtocol"
+			level="warn" />
+		<logger name="org.apache.sshd.common.util.SecurityUtils" level="warn" />
+		<Logger name="org.apache.tomcat.util.net.NioSelectorPool"
+			level="warn" />
+		<Logger name="org.eclipse.jetty.util.component.AbstractLifeCycle"
+			level="error" />
+		<Logger name="org.hibernate.validator.internal.util.Version"
+			level="warn" />
+		<logger name="org.springframework.boot.actuate.endpoint.jmx"
+			level="warn" />
+		<logger name="org.apache.http" level="error"/>
+		<logger name="org.springframework.cloud" level="debug"/>
+		<logger name="com.netflix" level="error"/>
+		<logger name="com.mchange" level="error"/>
+			
+		<Root level="debug" includeLocation="true" additivity="false">
+			<AppenderRef ref="APPENDER_CONSOLE" />
+        </Root>
+        
+	</Loggers>
+</Configuration>
