@@ -1,0 +1,20 @@
+[
+  {
+    "name": "SAKILA_LOCAL_MYSQL",
+    "connection": {
+      "driverClass": "com.mysql.cj.jdbc.Driver",
+      "jdbcUrl": "jdbc:mysql://192.128.0.10:3306/sakila?allowPublicKeyRetrieval=true&useUnicode=true&autoReconnect=true&verifyServerCertificate=false&useSSL=false&serverTimezone=UTC&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false",
+      "userName": "root",
+      "password": "sakila",
+      "databaseName": "sakila",
+      "enablePooling": true,
+      "pool": {
+        "initialSize": 7,
+        "minActive": 7,
+        "maxActive": 25,
+        "testOnBorrow": true,
+        "testQuery": "SELECT 1"
+      }
+    }
+  }
+]

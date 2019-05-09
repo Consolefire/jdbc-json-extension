@@ -1,0 +1,40 @@
+version: "3.3"
+
+networks:
+  jdbc-json-ext_bridge:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 192.128.0.0/24
+
+
+services:
+  jdbc-json-ext-mysql:
+    image: restsql/mysql-sakila
+    restart: always
+    hostname: jdbc-json-ext-mysql
+    networks:
+      jdbc-json-ext_bridge:
+        ipv4_address: 192.128.0.10
+    ports:
+      - 23307:3306
+    
+  jdbc-json-ext-api:
+    image: consolefire/jdbc-json-ext:1.1.4-SNAPSHOT
+    restart: always
+    hostname: jdbc-json-ext-api
+    networks:
+      jdbc-json-ext_bridge:
+        ipv4_address: 192.128.0.20
+    ports:
+      - 17077:7070
+    volumes:
+      - type: bind
+        source: ./mysql-sakila
+        target: /opt/consolefire/jdbc-json-ext
+    environment:
+      - SERVER_PORT=7070
+      - CXT_CONFIG_CLASSPATH=false
+      - CXT_CONFIG_DATA_SOURCE=/opt/consolefire/jdbc-json-ext/context/datasource.cfg.json
+      - CXT_CONFIG_FETCH_PLAN=/opt/consolefire/jdbc-json-ext/context/fetchplan.cfg.json
+    

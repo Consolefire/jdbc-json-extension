@@ -37,7 +37,7 @@ fi
 
 if [ -z "$RELEASE_TYPE" ] ; then
 	echo "No release type provided, setting to SNAPSHOT"
-	RELEASE_TYPE=""
+	RELEASE_TYPE="SNAPSHOT"
 fi
 
 echo "Changing [ $ACTION ] version with release type: [ $RELEASE_TYPE ]"
@@ -69,8 +69,12 @@ case $ACTION in
 	REFRESH)
 	set_version $CURRENT_VERSION
 	;;
+	RELEASE)
+	FINAL_VERSION="$CUR_MAJOR.`expr $CUR_MINOR + 1`.0"
+	set_version $FINAL_VERSION
+	;;
 	*)
-	echo "Need action { MAJOR | MINOR | PATCH | REFRESH }"
+	echo "Need action { MAJOR | MINOR | PATCH | REFRESH | RELEASE }"
 	exit 1;
 esac
 
