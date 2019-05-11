@@ -373,7 +373,7 @@ This will create a docker image for the sample
 __`Dockerfile` template__
 
 
-```bash
+```ruby
 FROM openjdk:8-jdk-alpine
 MAINTAINER sabuj.das@gmail.com
 
