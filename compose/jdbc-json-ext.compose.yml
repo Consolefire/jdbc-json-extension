@@ -20,7 +20,7 @@ services:
       - 23307:3306
     
   jdbc-json-ext-api:
-    image: consolefire/jdbc-json-ext:1.1.4-SNAPSHOT
+    image: consolefire/jdbc-json-ext:1.2.0
     restart: always
     hostname: jdbc-json-ext-api
     networks:
