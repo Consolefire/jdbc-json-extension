@@ -1,6 +1,31 @@
 # Jdbc JSON Extension 
 `jdbc-json-extension` is to fetch data from RDBMS in JSON format. The response data is structured the in the same relation structure of the Tables relationships in the database. The fetch is pre-planned using a `FetchPlan` configuration. The execution is multi-threaded tree pattern where it starts from the `root` table with supplied filter parameters. The subsequent nodes (tables) are fetched as the `One-to-*` relationship defined from the root tables.
 
+__Release Version: `1.2.0`__
+
+__Maven Dependency__
+
+`pom.xml`
+
+```xml
+<properties>
+	<jdbc.json.extension.version>1.2.0</jdbc.json.extension.version>
+</properties>
+<dependencies>
+	<dependency>
+		<groupId>com.consolefire</groupId>
+		<artifactId>jdbc-json-extension-common</artifactId>
+		<version>${jdbc.json.extension.version}</version>
+	</dependency>
+	<dependency>
+		<groupId>com.consolefire</groupId>
+		<artifactId>jdbc-json-extension-core</artifactId>
+		<version>${jdbc.json.extension.version}</version>
+	</dependency>
+</dependencies>
+```
+
+
 ## The Intent
 __Given__
 - Sakila's Film Database.
