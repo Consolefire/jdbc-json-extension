@@ -21,7 +21,7 @@ __Query:__
 
 __Expected Response:__
 
-```
+```javascript
 {
   "body": {
     "film": {
@@ -121,7 +121,8 @@ __Expected Response:__
 The required configurations are `DataSource` and `FetchPlan`
 
 #### DataSource Configuration:
-```
+
+```javascript
 {
   "name": "SAKILA_LOCAL_MYSQL",
   "connection": {
@@ -143,7 +144,7 @@ The required configurations are `DataSource` and `FetchPlan`
 ```
 
 #### Fetch Plan
-```
+```javascript
 {
   "name": "SAKILA.FETCH_FILMS_BY_ID",
   "qualifiers": [],
@@ -347,7 +348,7 @@ This will create a docker image for the sample
 __`Dockerfile` template__
 
 
-```
+```python
 FROM openjdk:8-jdk-alpine
 MAINTAINER sabuj.das@gmail.com
 USER root
@@ -384,7 +385,7 @@ This sample contains a container definition with MySql database. Also contains a
 *__Compose File__*
 
 
-```
+```javascript
 version: "3.3"
 networks:
   jdbc-json-ext_bridge:
