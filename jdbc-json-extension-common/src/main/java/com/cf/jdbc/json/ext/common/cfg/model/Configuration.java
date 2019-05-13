@@ -7,11 +7,17 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.cf.jdbc.json.ext.common.utils.StringUtils;
 
 import lombok.Getter;
 
+/**
+ * @author sdas
+ *
+ * @param <K>
+ */
 public abstract class Configuration<K extends Serializable> {
     @Getter
     private final K key;
@@ -23,14 +29,14 @@ public abstract class Configuration<K extends Serializable> {
     }
 
     public <T> void setParameter(String name, T data) {
-        if (StringUtils.nullOrEmpty(name)) {
+        if (StringUtils.hasText(name)) {
             this.parameters.put(name, data);
         }
     }
 
     @SuppressWarnings("unchecked")
     public <T> T getParameter(String name) {
-        if (StringUtils.nullOrEmpty(name) && this.parameters.containsKey(name)) {
+        if (StringUtils.hasText(name) && this.parameters.containsKey(name)) {
             return (T) this.parameters.get(name);
         }
         return null;
@@ -73,11 +79,29 @@ public abstract class Configuration<K extends Serializable> {
         return null != parameters ? Collections.unmodifiableMap(parameters) : new HashMap<>();
     }
 
+
+    /**
+     * Append/Update parameters without any NULL key.
+     * 
+     * @param parameters
+     */
     public void setParameters(Map<String, Object> parameters) {
-        this.parameters.putAll(parameters);
+        if (null != parameters && !parameters.isEmpty()) {
+            parameters.entrySet().parallelStream().filter(entry -> StringUtils.hasText(entry.getKey()))
+                    .forEach(entry -> {
+                        this.parameters.put(entry.getKey(), entry.getValue());
+                    });
+        }
     }
 
+    /**
+     * Append/Update qualifiers without NULLs.
+     * 
+     * @param qualifiers
+     */
     public void setQualifiers(Set<K> qualifiers) {
-        this.qualifiers.addAll(qualifiers);
+        if (null != qualifiers && !qualifiers.isEmpty()) {
+            this.qualifiers.addAll(qualifiers.stream().filter(q -> null != q).collect(Collectors.toSet()));
+        }
     }
 }
