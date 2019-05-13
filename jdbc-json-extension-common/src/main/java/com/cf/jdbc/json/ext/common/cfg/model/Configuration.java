@@ -15,8 +15,8 @@ import lombok.Getter;
 public abstract class Configuration<K extends Serializable> {
     @Getter
     private final K key;
-    private Set<K> qualifiers = new HashSet<K>();
-    private Map<String, Object> parameters = new HashMap<>();
+    private final Set<K> qualifiers = new HashSet<K>();
+    private final Map<String, Object> parameters = new HashMap<>();
 
     public Configuration(K key) {
         this.key = key;
@@ -67,5 +67,17 @@ public abstract class Configuration<K extends Serializable> {
 
     public boolean hasQualifiers() {
         return null != qualifiers && !qualifiers.isEmpty();
+    }
+
+    public Map<String, Object> getParameters() {
+        return null != parameters ? Collections.unmodifiableMap(parameters) : new HashMap<>();
+    }
+
+    public void setParameters(Map<String, Object> parameters) {
+        this.parameters.putAll(parameters);
+    }
+
+    public void setQualifiers(Set<K> qualifiers) {
+        this.qualifiers.addAll(qualifiers);
     }
 }
