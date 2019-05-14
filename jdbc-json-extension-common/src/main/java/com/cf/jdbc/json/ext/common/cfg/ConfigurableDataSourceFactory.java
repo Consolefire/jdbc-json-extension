@@ -5,33 +5,18 @@ import javax.sql.DataSource;
 import com.cf.jdbc.json.ext.common.cfg.model.ConnectionConfig;
 import com.cf.jdbc.json.ext.common.cfg.model.DataSourceConfig;
 
+import lombok.NonNull;
+
 public abstract class ConfigurableDataSourceFactory<D extends DataSource> extends DataSourceFactory<D> {
+    protected final ConfigurationContext<String, DataSourceConfig> configurationContext;
 
     public ConfigurableDataSourceFactory(ConfigurationContext<String, DataSourceConfig> configurationContext) {
-        super(configurationContext);
+        this.configurationContext = configurationContext;
     }
 
     @Override
-    public D getDataSource(String key) {
-        DataSourceConfig configuration = configurationContext.getConfiguration(key);
-        if (null != configuration) {
-            if (configuration.isPoolEnabled()) {
-                try {
-                    return buildPoolingDataSource(configuration.getKey(), configuration.getConnectionConfig());
-                } catch (Exception e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            } else {
-                try {
-                    return buildDataSource(configuration.getKey(), configuration.getConnectionConfig());
-                } catch (Exception e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-        }
-        return null;
+    protected DataSourceConfig getConfiguration(@NonNull String key) {
+        return configurationContext.getConfiguration(key);
     }
 
     protected D buildDataSource(final String name, final ConnectionConfig connectionConfig) throws Exception {
