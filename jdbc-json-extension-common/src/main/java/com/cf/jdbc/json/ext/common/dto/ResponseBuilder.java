@@ -9,6 +9,7 @@ import com.cf.jdbc.json.ext.common.cfg.meta.DatabaseMetaData;
 import com.cf.jdbc.json.ext.common.cfg.meta.TableMetaData;
 import com.cf.jdbc.json.ext.common.fetch.ResultNode;
 import com.cf.jdbc.json.ext.common.model.ResultDataSet;
+import com.cf.jdbc.json.ext.common.utils.StringUtils;
 
 import lombok.Getter;
 import lombok.NonNull;
@@ -20,6 +21,7 @@ public final class ResponseBuilder {
 
     @Getter
     private final ResultNode rootResultNode;
+    private final List<String> errors = new ArrayList<>();
 
     public ResponseBuilder(@NonNull String rootTableName, @NonNull DatabaseMetaData databaseMetaData) {
         this.rootTableName = rootTableName;
@@ -47,18 +49,28 @@ public final class ResponseBuilder {
         return this;
     }
 
-    public Map<String, Object> build() {
+    public final ResponseBuilder withError(String error) {
+        if (StringUtils.hasText(error)) {
+            this.errors.add(error);
+        }
+        return this;
+    }
+
+    public Response<Map<String, Object>> build() {
+        if (!this.errors.isEmpty()) {
+            return Response.error(this.errors);
+        }
         Map<String, Object> root = new HashMap<>();
         if (!rootResultNode.hasData()) {
             root.put(this.rootTableName, null);
-            return root;
+            return Response.empty();
         }
         final Map<String, Object> rootTableData = this.rootResultNode.getResultDataSet().getRow(0);
         TableMetaData rootTableMetaData = databaseMetaData.getTableMetaData(rootTableName);
         root.put(this.rootTableName, rootTableData);
         ResultNode rootResult = this.rootResultNode;
         extractChildProperties(rootTableData, null, rootTableMetaData, rootResult);
-        return root;
+        return Response.success(root);
     }
 
     private void extractChildProperties(final Map<String, Object> rootTableData, TableMetaData rootTableMetaData,

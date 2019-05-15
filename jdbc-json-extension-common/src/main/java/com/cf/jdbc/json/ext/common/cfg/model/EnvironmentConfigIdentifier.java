@@ -5,8 +5,10 @@ import java.util.Objects;
 
 import com.cf.jdbc.json.ext.common.ex.IllegalConfigurationException;
 
+import lombok.Getter;
 import lombok.NonNull;
 
+@Getter
 public final class EnvironmentConfigIdentifier implements Serializable {
 
     private static final long serialVersionUID = 3486268779872555059L;
