@@ -11,7 +11,7 @@ import com.cf.jdbc.json.ext.common.dto.QueryRequest;
 import com.cf.jdbc.json.ext.common.dto.Response;
 import com.cf.jdbc.json.ext.common.exec.ExecutionContext;
 import com.cf.jdbc.json.ext.common.fetch.FetchPlan;
-import com.cf.jdbc.json.ext.common.fetch.ResultNode;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -36,8 +36,7 @@ public class JsonJdbcDataSource extends AbstractJdbcJsonDataSource {
         }
         ExecutionContext executionContext =
                 new ExecutionContext(dataSource, fetchPlan.getDatabaseMetaData(), queryRequest.getParameters());
-        Map<String, Object> resultNode = fetchPlan.execute(executionContext);
-        return new Response<>(resultNode);
+        return fetchPlan.execute(executionContext);
     }
 
 }
