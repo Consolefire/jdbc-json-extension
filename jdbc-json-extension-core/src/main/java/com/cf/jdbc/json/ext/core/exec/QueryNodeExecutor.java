@@ -46,6 +46,7 @@ public class QueryNodeExecutor extends ActionExecutor<QueryActionNode, ResultNod
             }
         } catch (Exception exception) {
             log.error(exception.getMessage(), exception);
+            responseBuilder.withError(exception.getMessage());
             cancelTask(resultFuture);
         }
     }
@@ -83,6 +84,7 @@ public class QueryNodeExecutor extends ActionExecutor<QueryActionNode, ResultNod
             }
         } catch (InterruptedException | ExecutionException exception) {
             log.error(exception.getMessage(), exception);
+            responseBuilder.withError(exception.getMessage());
             cancelTasks(resultFutures);
         }
     }
