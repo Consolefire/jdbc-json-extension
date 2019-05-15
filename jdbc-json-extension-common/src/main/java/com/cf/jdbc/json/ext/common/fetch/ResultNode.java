@@ -15,6 +15,7 @@ import lombok.Setter;
 public class ResultNode extends Node {
 
     private ResultDataSet resultDataSet;
+    private String errorMessage;
 
     public ResultNode(@NonNull String name, ResultNode parent, List<? extends ResultNode> children) {
         super(name, parent, children);

@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 
 import com.cf.jdbc.json.ext.common.cfg.model.FetchPlanConfig;
+import com.cf.jdbc.json.ext.common.dto.Response;
 import com.cf.jdbc.json.ext.common.dto.ResponseBuilder;
 import com.cf.jdbc.json.ext.common.ex.IllegalConfigurationException;
 import com.cf.jdbc.json.ext.common.exec.ActionExecutor;
@@ -23,7 +24,7 @@ public abstract class ExecutableFetchPlan<S extends ActionNode, E extends Execut
     }
 
     @Override
-    public Map<String, Object> execute(ExecutionContext executionContext) {
+    public Response<Map<String, Object>> execute(ExecutionContext executionContext) {
         if (configured.get() == false) {
             // throw error
         }

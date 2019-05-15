@@ -6,6 +6,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.cf.jdbc.json.ext.common.cfg.ValidationSupport;
 import com.cf.jdbc.json.ext.common.cfg.meta.DatabaseMetaData;
 import com.cf.jdbc.json.ext.common.cfg.model.FetchPlanConfig;
+import com.cf.jdbc.json.ext.common.dto.Response;
 import com.cf.jdbc.json.ext.common.exec.ExecutionContext;
 
 
@@ -40,7 +41,7 @@ public abstract class FetchPlan implements ValidationSupport {
         return fetchPlanConfig.getKey();
     }
 
-    public abstract Map<String, Object> execute(ExecutionContext executionContext);
+    public abstract Response<Map<String, Object>> execute(ExecutionContext executionContext);
 
     public DatabaseMetaData getDatabaseMetaData() {
         return fetchPlanConfig.getDatabaseMetaData();
