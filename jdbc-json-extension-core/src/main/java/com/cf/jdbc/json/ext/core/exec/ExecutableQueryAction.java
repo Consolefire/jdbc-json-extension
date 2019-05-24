@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
+import com.cf.jdbc.json.ext.common.ex.NoResultFoundException;
 import com.cf.jdbc.json.ext.common.ex.NoValidQueryParamsFoundException;
 import com.cf.jdbc.json.ext.common.exec.ExecutableAction;
 import com.cf.jdbc.json.ext.common.exec.ExecutionContext;
@@ -58,7 +59,7 @@ public class ExecutableQueryAction extends ExecutableAction<QueryActionNode, Res
     protected ResultNode doInCall(ExecutionContext executionContext, QueryActionNode node) throws Exception {
         ResultDataSet resultDataSet = queryExecutor.execute(executionContext, node);
         if (null == resultDataSet || resultDataSet.getRowCount() <= 0) {
-            throw new Exception("No result from node: " + node.getName());
+            throw new NoResultFoundException("No result from node: " + node.getName());
         }
         ResultNode result = new ResultNode(node.getName());
         result.setResultDataSet(resultDataSet);

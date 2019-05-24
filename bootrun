@@ -3,7 +3,7 @@ DIR=$(pwd)
 export CXT_CONFIG_CLASSPATH=false
 export CXT_CONFIG_DATA_SOURCE=$DIR/config/context/datasource.cfg.json
 export CXT_CONFIG_FETCH_PLAN=$DIR/config/context/fetchplan.cfg.json
-export CXT_CONFIG_MD_SCN=$DIR/config/context/mysql-metadat-scan.cfg.json
+export CXT_CONFIG_MD_SCN=$DIR/config/context/metadata-scan.cfg.json
 
 $DIR/mvnw spring-boot:run -Psample
 

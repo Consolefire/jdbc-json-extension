@@ -6,6 +6,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.cf.jdbc.json.ext.common.ex.NoResultFoundException;
 import com.cf.jdbc.json.ext.common.ex.NoValidQueryParamsFoundException;
 import com.cf.jdbc.json.ext.common.fetch.ResultNode;
 import com.cf.jdbc.json.ext.common.model.ActionNode;
@@ -81,7 +82,7 @@ public abstract class ExecutableAction<A extends ActionNode, R extends ResultNod
             R result = doInCall(executionContext, sourceNode);
             list = afterCall(executionContext, parentAction, result);
             markComplete();
-        } catch (NoValidQueryParamsFoundException exception) {
+        } catch (NoValidQueryParamsFoundException | NoResultFoundException exception) {
             log.warn(exception.getMessage(), exception);
             return null;
         }
