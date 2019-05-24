@@ -1,12 +1,38 @@
 [
   {
     "name": "SAKILA_LOCAL_MYSQL",
+    "information": {
+      "type": "GENERIC",
+      "version": "8"
+    },
     "connection": {
       "driverClass": "com.mysql.cj.jdbc.Driver",
       "jdbcUrl": "jdbc:mysql://localhost:3306/sakila?allowPublicKeyRetrieval=true&useUnicode=true&autoReconnect=true&verifyServerCertificate=false&useSSL=false&serverTimezone=UTC&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false",
       "userName": "root",
       "password": "Root@1234",
       "databaseName": "sakila",
+      "enablePooling": true,
+      "pool": {
+        "initialSize": 7,
+        "minActive": 7,
+        "maxActive": 25,
+        "testOnBorrow": true,
+        "testQuery": "SELECT 1"
+      }
+    }
+  },
+  {
+    "name": "USER_ROLES_LOCAL_MYSQL",
+    "information": {
+      "type": "GENERIC",
+      "version": "8"
+    },
+    "connection": {
+      "driverClass": "com.mysql.cj.jdbc.Driver",
+      "jdbcUrl": "jdbc:mysql://localhost:3306/cf_users?allowPublicKeyRetrieval=true&useUnicode=true&autoReconnect=true&verifyServerCertificate=false&useSSL=false&serverTimezone=UTC&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false",
+      "userName": "root",
+      "password": "Root@1234",
+      "databaseName": "cf_users",
       "enablePooling": true,
       "pool": {
         "initialSize": 7,

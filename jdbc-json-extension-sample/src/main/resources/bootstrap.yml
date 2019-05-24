@@ -19,5 +19,6 @@ context:
     classpath: ${CXT_CONFIG_CLASSPATH:true}
     datasource: ${CXT_CONFIG_DATA_SOURCE:/context/datasource.cfg.json}
     fetchplan: ${CXT_CONFIG_FETCH_PLAN:/context/fetchplan.cfg.json}
+    metadata: ${CXT_CONFIG_MD_SCN:/context/metadata-scan.cfg.json}
   exec:
     logOnly: false

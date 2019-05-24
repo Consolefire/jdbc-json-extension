@@ -43,7 +43,13 @@ public abstract class AbstractConfigurationContext<K extends Serializable, C ext
 
     @Override
     public final void addConfiguration(K key, C config) {
-        this.configurations.put(key, config);
+        if (null != key && null != config) {
+            if (config.hasQualifiers()) {
+                config.getQualifiers().forEach(name -> this.configurations.put(name, config));
+            } else {
+                this.configurations.put(key, config);
+            }
+        }
     }
 
     @Override
@@ -56,10 +62,11 @@ public abstract class AbstractConfigurationContext<K extends Serializable, C ext
                     if (((ValidationSupport) config).isValid()) {
                         this.addConfiguration(key, config);
                     } else {
-                        throw new IllegalConfigurationException();
+                        throw new IllegalConfigurationException(
+                                "Config [ " + config.getClass() + " ] with key: [ " + key + " ] Not valid..");
                     }
                 } else {
-                    log.info("Validation not supported for config [{}]", config);
+                    log.info("Validation not supported for config [{}]", config.getClass());
                     this.addConfiguration(key, config);
                 }
             }
