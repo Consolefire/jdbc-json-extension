@@ -10,4 +10,16 @@ public class StringUtils {
         return null == text || text.trim().isEmpty();
     }
 
+    public static boolean isEqual(String a, String b, boolean c) {
+        if (null == a && null == b) {
+            return true;
+        }
+        if (null == a || null == b) {
+            return false;
+        }
+        if (c) {
+            return a.equals(b);
+        }
+        return a.equalsIgnoreCase(b);
+    };
 }

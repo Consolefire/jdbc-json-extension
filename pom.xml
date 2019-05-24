@@ -392,7 +392,7 @@
 										<images>
 											<image>
 												<alias>${project.artifactId}</alias>
-												<name>consolefire/jdbc-json-ext:${project.version}</name>
+												<name>consolefire/jdbc-json-ext</name>
 												<build>
 													<from>java:8</from>
 													<dockerFileDir>${CONFIG_ROOT}/docker/</dockerFileDir>
@@ -421,7 +421,7 @@
 										<verbose>true</verbose>
 										<image>
 											<alias>${project.artifactId}</alias>
-											<name>consolefire/jdbc-json-ext:${project.version}</name>
+											<name>consolefire/jdbc-json-ext</name>
 										</image>
 									</configuration>
 								</execution>

@@ -181,68 +181,438 @@
     "enableJoin": false,
     "databaseMetaData": {
       "schema": "sakila",
-      "scanMode": "REFRESH",
+      "scanMode": "NONE",
       "tables": [
         {
-          "name": "film",
+          "name": "rental",
           "columns": [
+            {
+              "name": "return_date"
+            },
+            {
+              "name": "customer_id"
+            },
+            {
+              "name": "staff_id"
+            },
+            {
+              "name": "last_update"
+            },
+            {
+              "name": "inventory_id"
+            },
+            {
+              "name": "rental_date"
+            },
+            {
+              "name": "rental_id"
+            }
+          ],
+          "select": null,
+          "references": {
+            "payment": {
+              "table": "payment",
+              "column": "rental_id",
+              "referenceTo": "rental_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            }
+          }
+        },
+        {
+          "name": "inventory",
+          "columns": [
+            {
+              "name": "store_id"
+            },
+            {
+              "name": "inventory_id"
+            },
+            {
+              "name": "film_id"
+            },
+            {
+              "name": "last_update"
+            }
+          ],
+          "select": null,
+          "references": {
+            "rental": {
+              "table": "rental",
+              "column": "inventory_id",
+              "referenceTo": "inventory_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            }
+          }
+        },
+        {
+          "name": "store",
+          "columns": [
+            {
+              "name": "address_id"
+            },
+            {
+              "name": "last_update"
+            },
+            {
+              "name": "manager_staff_id"
+            },
+            {
+              "name": "store_id"
+            }
+          ],
+          "select": null,
+          "references": {
+            "staff": {
+              "table": "staff",
+              "column": "store_id",
+              "referenceTo": "store_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "inventory": {
+              "table": "inventory",
+              "column": "store_id",
+              "referenceTo": "store_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "customer": {
+              "table": "customer",
+              "column": "store_id",
+              "referenceTo": "store_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            }
+          }
+        },
+        {
+          "name": "actor",
+          "columns": [
+            {
+              "name": "last_update"
+            },
+            {
+              "name": "actor_id"
+            },
+            {
+              "name": "first_name"
+            },
+            {
+              "name": "last_name"
+            }
+          ],
+          "select": null,
+          "references": {
+            "film_actor": {
+              "table": "film_actor",
+              "column": "actor_id",
+              "referenceTo": "actor_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            }
+          }
+        },
+        {
+          "name": "address",
+          "columns": [
+            {
+              "name": "address"
+            },
+            {
+              "name": "district"
+            },
+            {
+              "name": "city_id"
+            },
+            {
+              "name": "phone"
+            },
+            {
+              "name": "location"
+            },
+            {
+              "name": "postal_code"
+            },
+            {
+              "name": "last_update"
+            },
+            {
+              "name": "address2"
+            },
+            {
+              "name": "address_id"
+            }
+          ],
+          "select": null,
+          "references": {
+            "staff": {
+              "table": "staff",
+              "column": "address_id",
+              "referenceTo": "address_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "store": {
+              "table": "store",
+              "column": "address_id",
+              "referenceTo": "address_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "customer": {
+              "table": "customer",
+              "column": "address_id",
+              "referenceTo": "address_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            }
+          }
+        },
+        {
+          "name": "film_text",
+          "columns": [
+            {
+              "name": "description"
+            },
             {
               "name": "film_id"
             },
             {
               "name": "title"
-            },
-            {
-              "name": "description"
-            },
+            }
+          ],
+          "select": null,
+          "references": {}
+        },
+        {
+          "name": "film",
+          "columns": [
             {
               "name": "release_year"
             },
             {
-              "name": "language_id"
+              "name": "special_features"
             },
             {
-              "name": "original_language_id"
-            },
-            {
-              "name": "rental_duration"
-            },
-            {
-              "name": "rental_rate"
-            },
-            {
-              "name": "length"
-            },
-            {
-              "name": "replacement_cost"
+              "name": "film_id"
             },
             {
               "name": "rating"
             },
             {
-              "name": "special_features"
+              "name": "length"
+            },
+            {
+              "name": "description"
+            },
+            {
+              "name": "language_id"
+            },
+            {
+              "name": "rental_duration"
+            },
+            {
+              "name": "title"
+            },
+            {
+              "name": "original_language_id"
+            },
+            {
+              "name": "replacement_cost"
+            },
+            {
+              "name": "rental_rate"
+            },
+            {
+              "name": "last_update"
             }
           ],
+          "select": null,
           "references": {
-            "filmActors": {
-              "collection": true,
-              "table": "film_actor",
-              "column": "film_id",
-              "referenceTo": "film_id"
-            },
-            "filmCategories": {
-              "collection": true,
+            "film_category": {
               "table": "film_category",
               "column": "film_id",
-              "referenceTo": "film_id"
+              "referenceTo": "film_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "film_actor": {
+              "table": "film_actor",
+              "column": "film_id",
+              "referenceTo": "film_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
             },
             "inventory": {
-              "collection": false,
               "table": "inventory",
               "column": "film_id",
-              "referenceTo": "film_id"
+              "referenceTo": "film_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
             }
           }
+        },
+        {
+          "name": "payment",
+          "columns": [
+            {
+              "name": "amount"
+            },
+            {
+              "name": "customer_id"
+            },
+            {
+              "name": "last_update"
+            },
+            {
+              "name": "rental_id"
+            },
+            {
+              "name": "payment_date"
+            },
+            {
+              "name": "payment_id"
+            },
+            {
+              "name": "staff_id"
+            }
+          ],
+          "select": null,
+          "references": {}
+        },
+        {
+          "name": "customer",
+          "columns": [
+            {
+              "name": "create_date"
+            },
+            {
+              "name": "first_name"
+            },
+            {
+              "name": "last_update"
+            },
+            {
+              "name": "address_id"
+            },
+            {
+              "name": "active"
+            },
+            {
+              "name": "store_id"
+            },
+            {
+              "name": "customer_id"
+            },
+            {
+              "name": "last_name"
+            },
+            {
+              "name": "email"
+            }
+          ],
+          "select": null,
+          "references": {
+            "payment": {
+              "table": "payment",
+              "column": "customer_id",
+              "referenceTo": "customer_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "rental": {
+              "table": "rental",
+              "column": "customer_id",
+              "referenceTo": "customer_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            }
+          }
+        },
+        {
+          "name": "city",
+          "columns": [
+            {
+              "name": "city"
+            },
+            {
+              "name": "country_id"
+            },
+            {
+              "name": "city_id"
+            },
+            {
+              "name": "last_update"
+            }
+          ],
+          "select": null,
+          "references": {
+            "address": {
+              "table": "address",
+              "column": "city_id",
+              "referenceTo": "city_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            }
+          }
+        },
+        {
+          "name": "country",
+          "columns": [
+            {
+              "name": "country_id"
+            },
+            {
+              "name": "country"
+            },
+            {
+              "name": "last_update"
+            }
+          ],
+          "select": null,
+          "references": {
+            "city": {
+              "table": "city",
+              "column": "country_id",
+              "referenceTo": "country_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            }
+          }
+        },
+        {
+          "name": "film_category",
+          "columns": [
+            {
+              "name": "category_id"
+            },
+            {
+              "name": "film_id"
+            },
+            {
+              "name": "last_update"
+            }
+          ],
+          "select": null,
+          "references": {}
         },
         {
           "name": "film_actor",
@@ -257,51 +627,96 @@
               "name": "last_update"
             }
           ],
+          "select": null,
+          "references": {}
+        },
+        {
+          "name": "language",
+          "columns": [
+            {
+              "name": "name"
+            },
+            {
+              "name": "last_update"
+            },
+            {
+              "name": "language_id"
+            }
+          ],
+          "select": null,
           "references": {
-            "actor": {
+            "film": {
+              "table": "film",
+              "column": "original_language_id",
+              "referenceTo": "language_id",
               "collection": false,
-              "table": "actor",
-              "column": "actor_id",
-              "referenceTo": "actor_id"
+              "inverse": false,
+              "uniqueOn": null
             }
           }
         },
         {
-          "name": "actor",
+          "name": "staff",
           "columns": [
             {
-              "name": "actor_id"
+              "name": "username"
             },
             {
-              "name": "first_name"
+              "name": "address_id"
+            },
+            {
+              "name": "picture"
+            },
+            {
+              "name": "store_id"
+            },
+            {
+              "name": "active"
+            },
+            {
+              "name": "email"
             },
             {
               "name": "last_name"
             },
             {
-              "name": "last_update"
-            }
-          ]
-        },
-        {
-          "name": "film_category",
-          "columns": [
-            {
-              "name": "film_id"
+              "name": "password"
             },
             {
-              "name": "category_id"
+              "name": "staff_id"
             },
             {
               "name": "last_update"
+            },
+            {
+              "name": "first_name"
             }
           ],
+          "select": null,
           "references": {
-            "category": {
+            "payment": {
+              "table": "payment",
+              "column": "staff_id",
+              "referenceTo": "staff_id",
               "collection": false,
-              "table": "category",
-              "column": "category_id",
-              "referenceTo": "category_id"
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "store": {
+              "table": "store",
+              "column": "manager_staff_id",
+              "referenceTo": "staff_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "rental": {
+              "table": "rental",
+              "column": "staff_id",
+              "referenceTo": "staff_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
             }
           }
         },
@@ -309,34 +724,179 @@
           "name": "category",
           "columns": [
             {
-              "name": "name"
+              "name": "last_update"
             },
             {
               "name": "category_id"
             },
             {
-              "name": "last_update"
+              "name": "name"
             }
-          ]
-        },
+          ],
+          "select": null,
+          "references": {
+            "film_category": {
+              "table": "film_category",
+              "column": "category_id",
+              "referenceTo": "category_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            }
+          }
+        }
+      ],
+      "caseSensitive": false
+    }
+  },
+  {
+    "name": "LOCAL.ACCOUNTS_FETCH_BY_ID",
+    "qualifiers": [],
+    "select": {
+      "includes": [],
+      "excludes": [
+        "last_update"
+      ]
+    },
+    "fetch": {
+      "root": "accounts",
+      "parameters": [
+        "id"
+      ]
+    },
+    "enableJoin": false,
+    "databaseMetaData": {
+      "schema": "cf_users",
+      "scanMode": "NONE",
+      "tables": [
         {
-          "name": "inventory",
+          "name": "privileges",
           "columns": [
             {
-              "name": "inventory_id"
+              "name": "id"
             },
             {
-              "name": "film_id"
+              "name": "name"
             },
             {
-              "name": "store_id"
-            },
-            {
-              "name": "last_update"
+              "name": "description"
             }
-          ]
+          ],
+          "select": null,
+          "references": {
+            
+          }
+        },
+        {
+          "name": "roles",
+          "columns": [
+            {
+              "name": "id"
+            },
+            {
+              "name": "name"
+            },
+            {
+              "name": "description"
+            }
+          ],
+          "select": null,
+          "references": {
+            "role_privileges.role_id": {
+              "table": "role_privileges",
+              "column": "role_id",
+              "referenceTo": "id",
+              "collection": true,
+              "inverse": false,
+              "uniqueOn": null
+            }
+          }
+        },
+        {
+          "name": "role_privileges",
+          "columns": [
+            {
+              "name": "privilege_id"
+            },
+            {
+              "name": "role_id"
+            }
+          ],
+          "select": null,
+          "references": {
+          "privileges": {
+              "table": "privileges",
+              "column": "id",
+              "referenceTo": "privilege_id",
+              "collection": true,
+              "inverse": false,
+              "uniqueOn": null
+            }}
+        },
+        {
+          "name": "accounts",
+          "columns": [
+            {
+              "name": "id"
+            },
+            {
+              "name": "enabled"
+            },
+            {
+              "name": "password"
+            },
+            {
+              "name": "locked"
+            },
+            {
+              "name": "user_name"
+            },
+            {
+              "name": "account_expired"
+            },
+            {
+              "name": "credential_expired"
+            },
+            {
+              "name": "email"
+            }
+          ],
+          "select": null,
+          "references": {
+            "account_roles": {
+              "table": "account_roles",
+              "column": "account_id",
+              "referenceTo": "id",
+              "collection": true,
+              "inverse": false,
+              "uniqueOn": null
+            }
+          }
+        },
+        {
+          "name": "account_roles",
+          "columns": [
+            {
+              "name": "role_id"
+            },
+            {
+              "name": "account_id"
+            }
+          ],
+          "select": null,
+          "references": {
+            "roles": {
+              "table": "roles",
+              "column": "id",
+              "referenceTo": "role_id",
+              "collection": true,
+              "inverse": false,
+              "uniqueOn": null
+            }
+          }
         }
-      ]
+      ],
+      "caseSensitive": false
     }
   }
 ]

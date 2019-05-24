@@ -13,6 +13,8 @@ public class DataSourceConfig extends Configuration<String> implements Validatio
 
     @JsonProperty(value = "connection")
     private ConnectionConfig connectionConfig;
+    @JsonProperty(value = "information")
+    private DatabaseInformation information;
 
     @JsonCreator
     public DataSourceConfig(@JsonProperty(value = "name", required = true) String dataSourceName) {
@@ -31,4 +33,14 @@ public class DataSourceConfig extends Configuration<String> implements Validatio
         return connectionConfig.isEnablePooling();
     }
 
+    public void setInformation(DatabaseInformation information) {
+        if (null == information) {
+            information = DatabaseInformation.GENERIC_DATABASE;
+        }
+        this.information = information;
+    }
+
+    public final boolean isGenericDatabase() {
+        return DatabaseType.GENERIC.equals(information.getType());
+    }
 }

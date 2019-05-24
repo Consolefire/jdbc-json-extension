@@ -9,6 +9,7 @@ import lombok.NonNull;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class EnvironmentConfiguration extends Configuration<String> {
 
+    public static final String SYSTEM_ENV_NAME = "system";
     public static final String DEFAULT_ENV_NAME = "default";
 
     @JsonCreator

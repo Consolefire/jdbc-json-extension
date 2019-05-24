@@ -37,5 +37,13 @@ public class Reference {
         return Objects.equals(referenceTo, other.referenceTo) && Objects.equals(table, other.table);
     }
 
+    public final Reference copy() {
+        Reference reference = new Reference();
+        reference.table = this.table;
+        reference.column = this.column;
+        reference.referenceTo = this.referenceTo;
+        reference.collection = this.collection;
+        return reference;
+    }
 
 }

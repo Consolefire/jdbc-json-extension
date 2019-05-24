@@ -18,7 +18,7 @@ public class ConnectionConfig implements ValidationSupport {
     private final String userName;
     @JsonIgnore
     private final String password;
-    private String databaseName;
+    private final String databaseName;
     private boolean enablePooling;
     @JsonProperty(value = "pool")
     private PoolConfig poolConfig;
@@ -27,11 +27,13 @@ public class ConnectionConfig implements ValidationSupport {
     public ConnectionConfig(@JsonProperty(value = "driverClass", required = true) String driverClass,
             @JsonProperty(value = "jdbcUrl", required = true) String jdbcUrl,
             @JsonProperty(value = "userName", required = true) String userName,
-            @JsonProperty(value = "password", required = false, defaultValue = "") String password) {
+            @JsonProperty(value = "password", required = false, defaultValue = "") String password,
+            @JsonProperty(value = "databaseName", required = true) String databaseName) {
         this.driverClass = driverClass;
         this.jdbcUrl = jdbcUrl;
         this.userName = userName;
         this.password = password;
+        this.databaseName = databaseName;
     }
 
     @Override

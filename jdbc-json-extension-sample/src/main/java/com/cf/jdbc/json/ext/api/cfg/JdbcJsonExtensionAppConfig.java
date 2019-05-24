@@ -18,20 +18,26 @@ import com.cf.jdbc.json.ext.common.cfg.ConfigurationParser;
 import com.cf.jdbc.json.ext.common.cfg.ConfigurationReader;
 import com.cf.jdbc.json.ext.common.cfg.DataSourceFactory;
 import com.cf.jdbc.json.ext.common.cfg.FetchPlanFactory;
+import com.cf.jdbc.json.ext.common.cfg.MetaDataScanConfigurationContext;
+import com.cf.jdbc.json.ext.common.cfg.MetaDataScannerResolver;
 import com.cf.jdbc.json.ext.common.cfg.model.DataSourceConfig;
 import com.cf.jdbc.json.ext.common.cfg.model.FetchPlanConfig;
+import com.cf.jdbc.json.ext.common.cfg.model.MetaDataScanConfig;
 import com.cf.jdbc.json.ext.common.ds.JsonDataSource;
 import com.cf.jdbc.json.ext.common.query.ActionNodeExecutor;
 import com.cf.jdbc.json.ext.core.cfg.ClasspathResourceConfigurationReader;
 import com.cf.jdbc.json.ext.core.cfg.DataSourceConfigJsonParser;
 import com.cf.jdbc.json.ext.core.cfg.DefaultConfigurationContext;
 import com.cf.jdbc.json.ext.core.cfg.FetchPlanConfigJsonParser;
+import com.cf.jdbc.json.ext.core.cfg.JsonConfigurationParser;
 import com.cf.jdbc.json.ext.core.cfg.JsonJdbcFetchPlanFactory;
 import com.cf.jdbc.json.ext.core.cfg.LocalFileSystemConfigurationReader;
 import com.cf.jdbc.json.ext.core.exec.JdbcQueryExecutor;
 import com.cf.jdbc.json.ext.core.exec.LoggingQueryExecutor;
 import com.cf.jdbc.json.ext.core.mgr.JsonJdbcDataSource;
 import com.cf.jdbc.json.ext.core.query.QueryActionNode;
+import com.cf.jdbc.json.ext.core.scn.DefaultMetaDataScannerResolver;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -97,6 +103,43 @@ public class JdbcJsonExtensionAppConfig {
                 new DefaultConfigurationContext<String, FetchPlanConfig>(configurationReader, configurationParser);
         context.initContext();
         return context;
+    }
+
+
+    @Bean("metadataScanConfigurationReader")
+    @ConditionalOnProperty(prefix = "context.config", name = "classpath", havingValue = "true", matchIfMissing = false)
+    public ConfigurationReader<String> metadataScanConfigurationClasspathReader(
+            @Value("${context.config.metadata}") String configLocation) {
+        log.info("Creating metadataScanConfigurationReader from classpath with location: {}", configLocation);
+        return new ClasspathResourceConfigurationReader(configLocation);
+    }
+
+    @Bean("metadataScanConfigurationReader")
+    @ConditionalOnProperty(prefix = "context.config", name = "classpath", havingValue = "false", matchIfMissing = true)
+    public ConfigurationReader<String> metadataScanConfigurationLocalFSReader(
+            @Value("${context.config.metadata}") String configLocation) {
+        log.info("Creating metadataScanConfigurationReader from local file system with location: {}", configLocation);
+        return new LocalFileSystemConfigurationReader(configLocation);
+    }
+
+    @Bean("metadataScanConfigurationContext")
+    @Autowired
+    public MetaDataScanConfigurationContext metadataScanConfigurationContext(
+            @Qualifier("metadataScanConfigurationReader") ConfigurationReader<String> configurationReader) {
+        log.info("metadataScanConfigurationContext type: {}", configurationReader.getClass().getName());
+        ConfigurationParser<String, MetaDataScanConfig, Collection<MetaDataScanConfig>> configurationParser =
+                new JsonConfigurationParser<MetaDataScanConfig, Collection<MetaDataScanConfig>>(
+                        new TypeReference<Collection<MetaDataScanConfig>>() {});
+        MetaDataScanConfigurationContext context =
+                new MetaDataScanConfigurationContext(configurationReader, configurationParser);
+        context.initContext();
+        return context;
+    }
+
+    @Bean
+    public MetaDataScannerResolver metaDataScannerResolver(
+            MetaDataScanConfigurationContext metadataScanConfigurationContext) {
+        return new DefaultMetaDataScannerResolver(metadataScanConfigurationContext);
     }
 
     // @Bean
