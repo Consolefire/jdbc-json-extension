@@ -32,21 +32,26 @@ public class ExecutionContext {
     }
 
     public ExecutionContext copy() {
-        return new ExecutionContext(dataSource, databaseMetaData,
-                this.sourceParameters);
+        return new ExecutionContext(dataSource, databaseMetaData, this.sourceParameters);
     }
 
     public ExecutionContext copyWithParameters(@NonNull Map<String, Object> parameters) {
-        parameters.putAll(sourceParameters);
-        Map<String, Object> params = new HashMap<>();
-        parameters.entrySet().forEach(entry -> {
-            params.put(entry.getKey(), entry.getValue());
-        });
-        this.sourceParameters.entrySet().forEach(entry -> {
-            if (!parameters.containsKey(entry.getKey())) {
+        return copyWithParameters(parameters, false);
+    }
+
+    public ExecutionContext copyWithParameters(@NonNull Map<String, Object> parameters, boolean merge) {
+        if (merge) {
+            parameters.putAll(sourceParameters);
+            Map<String, Object> params = new HashMap<>();
+            parameters.entrySet().forEach(entry -> {
                 params.put(entry.getKey(), entry.getValue());
-            }
-        });
+            });
+            this.sourceParameters.entrySet().forEach(entry -> {
+                if (!parameters.containsKey(entry.getKey())) {
+                    params.put(entry.getKey(), entry.getValue());
+                }
+            });
+        }
         ExecutionContext context = new ExecutionContext(dataSource, databaseMetaData, parameters);
         return context;
     }
