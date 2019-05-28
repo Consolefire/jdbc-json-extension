@@ -1,0 +1,10 @@
+machine:
+  java:
+    version: openjdk8
+dependencies:
+  override:
+    - ./mvnw --fail-never dependency:go-offline || true
+    
+compile:
+  override:
+    - ./mvnw clean install

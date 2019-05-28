@@ -1,0 +1,11 @@
+
+language: java
+
+cache:
+  directories:
+    - ~/.m2/repository
+
+
+install:
+  ./mvnw --settings .mvn.xml install -Dmaven.javadoc.skip=true -B -V
+
