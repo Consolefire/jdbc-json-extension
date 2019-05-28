@@ -1,22 +1,22 @@
 
 language: java
 
-before_install:
-  - echo $GPG_SECRET_KEYS | base64 --decode | $DEPLOYMENT_GPG_EXECUTABLE --import
-  - echo $GPG_OWNERTRUST | base64 --decode | $DEPLOYMENT_GPG_EXECUTABLE --import-ownertrust
+#before_install:
+#  - echo $GPG_SECRET_KEYS | base64 --decode | $DEPLOYMENT_GPG_EXECUTABLE --import
+#  - echo $GPG_OWNERTRUST | base64 --decode | $DEPLOYMENT_GPG_EXECUTABLE --import-ownertrust
 
 install:
-  ./mvnw --settings .mvn.xml install -Dgpg.skip -Dmaven.javadoc.skip=true -B -V
+  ./mvnw --settings .mvn.xml install -Dgpg.passphrase=$DEPLOYMENT_GPG_PASSPHRASE -Dmaven.javadoc.skip=true -B -V
 
 script:
-  ./mvnw --settings .mvn.xml clean deploy -B -U -Ppublish
+  ./mvnw --settings .mvn.xml clean deploy -Dgpg.passphrase=$DEPLOYMENT_GPG_PASSPHRASE -B -U -Ppublish
   
-before_deploy:
-  - ./mvnw help:evaluate -N -Dexpression=project.version|grep -v '\['
-  - export project_version=$(./mvnw help:evaluate -N -Dexpression=project.version|grep -v '\[')
-
-
-
+#before_deploy:
+#  - ./mvnw help:evaluate -N -Dexpression=project.version|grep -v '\['
+#  - export project_version=$(./mvnw help:evaluate -N -Dexpression=project.version|grep -v '\[')
+#
+#
+#
 
 
 
