@@ -1,0 +1,24 @@
+
+version: 2
+
+jobs:
+  build:
+    working_directory: ~/jdbc-json-extension
+  
+  docker: # run the steps with Docker
+    - image: circleci/openjdk:8-jdk-browsers
+
+
+  steps:
+    - checkout
+    - restore_cache:
+        key: jdbc-json-extension-{{ checksum "pom.xml" }} 
+    - run: mvn dependency:go-offline
+    - save_cache: # saves the project dependencies
+        paths:
+          - ~/.m2
+        key: jdbc-json-extension-{{ checksum "pom.xml" }}
+    - run: ./mvnw package
+
+
+
