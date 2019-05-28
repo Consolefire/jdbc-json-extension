@@ -272,6 +272,7 @@
 						<configuration>
 							<keyname>${consolefire.gpg.keyname}</keyname>
 							<passphraseServerId>${consolefire.gpg.keyname}</passphraseServerId>
+							<passphrase>${consolefire.gpg.passphrase}</passphrase>
 						</configuration>
 						<executions>
 							<execution>
