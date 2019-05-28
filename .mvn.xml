@@ -22,6 +22,7 @@
 				<gpg.executable>${env.DEPLOYMENT_GPG_EXECUTABLE}</gpg.executable>
 				<gpg.passphrase>${env.DEPLOYMENT_GPG_PASSPHRASE}</gpg.passphrase>
 				<consolefire.gpg.keyname>${env.DEPLOYMENT_GPG_KEY_NAME}</consolefire.gpg.keyname>
+				<consolefire.gpg.passphrase>${env.DEPLOYMENT_GPG_PASSPHRASE}</consolefire.gpg.passphrase>
 			</properties>
 		</profile>
 

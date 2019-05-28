@@ -10,6 +10,7 @@ before_install:
   - gpg --export --armor $DEPLOYMENT_GPG_KEY_NAME | sudo apt-key add - && sudo apt-get update    
 #  - echo $DEPLOYMENT_GPG_KEY_NAME | base64 --decode | $DEPLOYMENT_GPG_EXECUTABLE --import
 #  - echo $GPG_OWNERTRUST | base64 --decode | $DEPLOYMENT_GPG_EXECUTABLE --import-ownertrust
+  - gpg --list-keys
 
 install:
   ./mvnw --settings .mvn.xml install -Dmaven.javadoc.skip=true -B -V
