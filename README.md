@@ -3,8 +3,11 @@
 
 __Release Version: `1.4.0`__ available in [Maven central](http://repo1.maven.org/maven2/com/consolefire/)
 
+Build Status: [![CircleCI](https://circleci.com/gh/Consolefire/jdbc-json-extension.svg?style=svg)](https://circleci.com/gh/Consolefire/jdbc-json-extension)
 
 __Snapshot Version: `1.4.2-SNAPSHOT`__
+
+Build Status: [![CircleCI](https://circleci.com/gh/Consolefire/jdbc-json-extension/tree/develop.svg?style=svg)](https://circleci.com/gh/Consolefire/jdbc-json-extension/tree/develop)
 
 __Maven Dependency__ in `pom.xml`
 
