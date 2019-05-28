@@ -9,10 +9,10 @@ before_install:
 #  - echo $GPG_OWNERTRUST | base64 --decode | $DEPLOYMENT_GPG_EXECUTABLE --import-ownertrust
 
 install:
-  ./mvnw --settings .mvn.xml install -Dgpg.passphrase=$DEPLOYMENT_GPG_PASSPHRASE -B -V
+  ./mvnw --settings .mvn.xml install -Dgpg.passphrase=$DEPLOYMENT_GPG_PASSPHRASE -Dmaven.javadoc.skip=true -B -V
 
 script:
-  ./mvnw --settings .mvn.xml clean deploy -Dgpg.passphrase=$DEPLOYMENT_GPG_PASSPHRASE -B -U -Ppublish
+  ./mvnw --settings .mvn.xml clean deploy -Dgpg.passphrase=$DEPLOYMENT_GPG_PASSPHRASE -Dmaven.javadoc.skip=true -B -U -Ppublish
   
 #before_deploy:
 #  - ./mvnw help:evaluate -N -Dexpression=project.version|grep -v '\['
