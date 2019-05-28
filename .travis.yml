@@ -1,12 +1,15 @@
 
 language: java
 
+cache:
+  directories:
+    - ~/.m2/repository
+
 before_install:
   - gpg --keyserver keyserver.ubuntu.com --recv $DEPLOYMENT_GPG_KEY_NAME
-  - gpg --export --armor $DEPLOYMENT_GPG_KEY_NAME | sudo apt-key add - && sudo apt-get update
-    
-#  - echo $GPG_SECRET_KEYS | base64 --decode | $DEPLOYMENT_GPG_EXECUTABLE --import
-#  - echo $GPG_OWNERTRUST | base64 --decode | $DEPLOYMENT_GPG_EXECUTABLE --import-ownertrust
+  - gpg --export --armor $DEPLOYMENT_GPG_KEY_NAME | sudo apt-key add - && sudo apt-get update    
+  - echo $GPG_SECRET_KEYS | base64 --decode | $DEPLOYMENT_GPG_EXECUTABLE --import
+  - echo $GPG_OWNERTRUST | base64 --decode | $DEPLOYMENT_GPG_EXECUTABLE --import-ownertrust
 
 install:
   ./mvnw --settings .mvn.xml install -Dgpg.passphrase=$DEPLOYMENT_GPG_PASSPHRASE -Dmaven.javadoc.skip=true -B -V
