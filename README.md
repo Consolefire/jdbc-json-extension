@@ -1,11 +1,28 @@
 # Jdbc JSON Extension 
 `jdbc-json-extension` is to fetch data from RDBMS in JSON format. The response data is structured the in the same relation structure of the Tables relationships in the database. The fetch is pre-planned using a `FetchPlan` configuration. The execution is multi-threaded tree pattern where it starts from the `root` table with supplied filter parameters. The subsequent nodes (tables) are fetched as the `One-to-*` relationship defined from the root tables.
 
-__Release Version: `1.2.0`__
+__Release Version: `1.4.0`__ available in [Maven central](http://repo1.maven.org/maven2/com/consolefire/)
 
-__Maven Dependency__
 
-`pom.xml`
+__Snapshot Version: `1.4.2-SNAPSHOT`__
+
+__Maven Dependency__ in `pom.xml`
+
+*Snapshot Repository*
+
+```xml
+<repositories>
+  <repository>
+    <id>sonatype-snapshot</id>
+    <url>https://oss.sonatype.org/content/groups/public</url>
+    <snapshots>
+      <enabled>true</enabled>
+    </snapshots>
+  </repository>
+</repositories>
+```
+
+
 
 ```xml
 <properties>
@@ -27,6 +44,8 @@ __Maven Dependency__
 
 
 ## The Intent
+Need to read data from a root table along with it's dependents in a `one-to-*` relations.
+
 __Given__
 - Sakila's Film Database.
 - Fetch a Film (by ID) with its Categoris and Actors data
@@ -147,12 +166,15 @@ The required configurations are `DataSource` and `FetchPlan`
 
 #### DataSource Configuration:
 
+A `DataSource` configuration is to provide all required connection details to a Database.
+*!!! The required `Driver` implementation library has to be provided !!!*
+
 ```javascript
 {
   "name": "SAKILA_LOCAL_MYSQL",
   "connection": {
     "driverClass": "com.mysql.cj.jdbc.Driver",
-    "jdbcUrl": "jdbc:mysql://localhost:3306/sakila?allowPublicKeyRetrieval=true&useUnicode=true&autoReconnect=true&verifyServerCertificate=false&useSSL=false&serverTimezone=UTC&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false",
+    "jdbcUrl": "jdbc:mysql://localhost:3306/sakila",
     "userName": "root",
     "password": "sakila",
     "databaseName": "sakila",
@@ -169,6 +191,10 @@ The required configurations are `DataSource` and `FetchPlan`
 ```
 
 #### Fetch Plan
+
+A `FetchPlan` defines the required database metadata and the root table from where the data read should start.
+
+
 ```javascript
 {
   "name": "SAKILA.FETCH_FILMS_BY_ID",
