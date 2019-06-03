@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import com.cf.jdbc.json.ext.common.cfg.meta.ColumnSelection;
 import com.cf.jdbc.json.ext.common.cfg.meta.DatabaseMetaData;
 import com.cf.jdbc.json.ext.common.cfg.meta.Reference;
 import com.cf.jdbc.json.ext.common.cfg.meta.TableMetaData;
@@ -25,13 +26,15 @@ public class JoinSelectQueryBuilder extends QueryBuilder {
     private final TableMetaData tableMetaData;
     private final AtomicInteger nodeIndex = new AtomicInteger(0);
 
-    public JoinSelectQueryBuilder(DatabaseMetaData databaseMetaData, String tableName) {
-        super(databaseMetaData, tableName);
+    public JoinSelectQueryBuilder(DatabaseMetaData databaseMetaData, String tableName,
+            ColumnSelection globalSelection) {
+        super(databaseMetaData, tableName, globalSelection);
         this.tableMetaData = databaseMetaData.getTableMetaData(tableName);
     }
 
-    public JoinSelectQueryBuilder(DatabaseMetaData metaData, String tableName, String key, Reference reference) {
-        super(metaData, tableName, key, reference);
+    public JoinSelectQueryBuilder(DatabaseMetaData metaData, String tableName, ColumnSelection globalSelection,
+            String key, Reference reference) {
+        super(metaData, tableName, globalSelection, key, reference);
         this.tableMetaData = databaseMetaData.getTableMetaData(tableName);
     }
 
