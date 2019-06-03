@@ -37,4 +37,5 @@ services:
       - CXT_CONFIG_CLASSPATH=false
       - CXT_CONFIG_DATA_SOURCE=/opt/consolefire/jdbc-json-ext/context/datasource.cfg.json
       - CXT_CONFIG_FETCH_PLAN=/opt/consolefire/jdbc-json-ext/context/fetchplan.cfg.json
+      - CXT_CONFIG_MD_SCN=/opt/consolefire/jdbc-json-ext/context/metadata-scan.cfg.json
     

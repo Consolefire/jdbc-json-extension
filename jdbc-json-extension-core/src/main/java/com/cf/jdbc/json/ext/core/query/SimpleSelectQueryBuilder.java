@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.cf.jdbc.json.ext.common.cfg.meta.ColumnSelection;
 import com.cf.jdbc.json.ext.common.cfg.meta.DatabaseMetaData;
 import com.cf.jdbc.json.ext.common.cfg.meta.Reference;
 import com.cf.jdbc.json.ext.common.cfg.meta.TableMetaData;
@@ -17,20 +18,22 @@ public class SimpleSelectQueryBuilder extends QueryBuilder {
 
     private final TableMetaData tableMetaData;
 
-    public SimpleSelectQueryBuilder(DatabaseMetaData databaseMetaData, String tableName) {
-        super(databaseMetaData, tableName);
+    public SimpleSelectQueryBuilder(DatabaseMetaData databaseMetaData, String tableName,
+            ColumnSelection globalSelection) {
+        super(databaseMetaData, tableName, globalSelection);
         this.tableMetaData = databaseMetaData.getTableMetaData(tableName);
     }
 
-    public SimpleSelectQueryBuilder(DatabaseMetaData metaData, String tableName, String key, Reference reference) {
-        super(metaData, tableName, key, reference);
+    public SimpleSelectQueryBuilder(DatabaseMetaData metaData, String tableName, ColumnSelection globalSelection,
+            String key, Reference reference) {
+        super(metaData, tableName, globalSelection, key, reference);
         this.tableMetaData = databaseMetaData.getTableMetaData(tableName);
     }
 
     @Override
     public Query build(Set<String> params) {
         Map<String, String> propertyColumnMap = new HashMap<>();
-        Set<String> columnNames = tableMetaData.getColumnNames();
+        Set<String> columnNames = columnsToSelect(tableMetaData);
         columnNames.parallelStream().forEach(col -> {
             propertyColumnMap.put(col, col);
         });

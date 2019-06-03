@@ -4,11 +4,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@JsonPropertyOrder({"status", "errors", "body"})
 public class Response<T> {
 
     public enum Status {
@@ -24,10 +28,12 @@ public class Response<T> {
         this.status = status;
     }
 
+    @JsonIgnore
     public boolean isEmpty() {
         return null == body;
     }
 
+    @JsonIgnore
     public boolean isSuccess() {
         return null != status && Status.SUCCESS.equals(status);
     }
