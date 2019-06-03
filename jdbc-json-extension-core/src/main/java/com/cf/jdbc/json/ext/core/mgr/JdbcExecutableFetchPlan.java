@@ -111,15 +111,16 @@ public class JdbcExecutableFetchPlan extends ExecutableFetchPlan<QueryActionNode
 
 
     private Query createQueryWithReference(String tableName, Set<String> parameters, String key, Reference ref) {
-        QueryBuilder qb =
-                fetchPlanConfig.isEnableJoin() ? new JoinSelectQueryBuilder(databaseMetaData, tableName, key, ref)
-                        : new SimpleSelectQueryBuilder(databaseMetaData, tableName, key, ref);
+        QueryBuilder qb = fetchPlanConfig.isEnableJoin()
+                ? new JoinSelectQueryBuilder(databaseMetaData, tableName, fetchPlanConfig.getSelect(), key, ref)
+                : new SimpleSelectQueryBuilder(databaseMetaData, tableName, fetchPlanConfig.getSelect(), key, ref);
         return qb.build(parameters);
     }
 
     private Query createQuery(String tableName, Set<String> parameters) {
-        QueryBuilder qb = fetchPlanConfig.isEnableJoin() ? new JoinSelectQueryBuilder(databaseMetaData, tableName)
-                : new SimpleSelectQueryBuilder(databaseMetaData, tableName);
+        QueryBuilder qb = fetchPlanConfig.isEnableJoin()
+                ? new JoinSelectQueryBuilder(databaseMetaData, tableName, fetchPlanConfig.getSelect())
+                : new SimpleSelectQueryBuilder(databaseMetaData, tableName, fetchPlanConfig.getSelect());
         return qb.build(parameters);
     }
 
