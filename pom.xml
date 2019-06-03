@@ -6,7 +6,7 @@
 
 	<groupId>com.consolefire</groupId>
 	<artifactId>jdbc-json-extension</artifactId>
-	<version>1.4.2-SNAPSHOT</version>
+	<version>1.4.3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>ConsoleFire > JDBC JSON Extension</name>
 	<url>https://github.com/Consolefire/jdbc-json-extension</url>
