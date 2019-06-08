@@ -23,7 +23,8 @@ public class EnvironmentConfigurationContext
     }
 
     public EnvironmentConfigurationContext(ConfigurationReader<String> configurationReader,
-            ConfigurationParser<String, EnvironmentConfiguration, Collection<EnvironmentConfiguration>> configurationParser) {
+            ConfigurationParser<String, EnvironmentConfiguration, 
+            Collection<EnvironmentConfiguration>> configurationParser) {
         super(configurationReader, configurationParser);
     }
 

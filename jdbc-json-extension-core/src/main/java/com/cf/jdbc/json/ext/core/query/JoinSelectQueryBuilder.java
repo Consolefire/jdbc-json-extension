@@ -40,7 +40,6 @@ public class JoinSelectQueryBuilder extends QueryBuilder {
 
     @Override
     public Query build(Set<String> params) {
-        StringBuilder selectBuilder = new StringBuilder("\nSELECT ");
         JoinTableNode joinTableRoot = new JoinTableNode(databaseMetaData.getSchema(), tableMetaData.getName(),
                 tableMetaData.getName(), nodeIndex.incrementAndGet(), "id", null, tableMetaData.getColumnNames(),
                 tableMetaData.getName());
@@ -60,7 +59,7 @@ public class JoinSelectQueryBuilder extends QueryBuilder {
                         columnExtractors);
             }
         }
-
+        StringBuilder selectBuilder = new StringBuilder("\nSELECT ");
         selectBuilder.append(" \n\t\t").append(columns.parallelStream().sorted((x, y) -> {
             return (null != x && null != y) ? x.compareTo(y) : 0;
         }).collect(Collectors.joining(", \n\t\t")));

@@ -21,7 +21,8 @@ public class QueryBasedMetaDataScanner extends AbstractMetaDataScanner {
 
 
     @Override
-    protected DatabaseMetaData doInScan(@NonNull String schemaName, @NonNull DataSource dataSource, @NonNull DatabaseInformation information) {
+    protected DatabaseMetaData doInScan(@NonNull String schemaName, 
+            @NonNull DataSource dataSource, @NonNull DatabaseInformation information) {
         MetaDataScanConfig metaDataScanConfig = configurationContext.getConfiguration(information);
         if (null == metaDataScanConfig) {
             throw new IllegalConfigurationException("No scan config found for database: " + information);

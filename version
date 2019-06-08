@@ -22,8 +22,8 @@ set_version()
 
 	echo $VERSION > version.dat
 
-	mvn versions:set -DnewVersion=$VERSION
-	mvn versions:commit
+	mvn -Pall versions:set -DnewVersion=$VERSION
+	mvn -Pall versions:commit
 }
 
 ACTION=$1

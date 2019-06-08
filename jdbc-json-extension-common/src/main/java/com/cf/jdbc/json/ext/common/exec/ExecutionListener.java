@@ -5,16 +5,16 @@ public interface ExecutionListener {
     default void onEvent(ExecutionEvent event) {
         if (null != event) {
             switch (event.getState()) {
-                case FAILED:
-                    onError(event);
-                    break;
-                case SUCCESS:
-                    onSuccess(event);
-                    break;
-                case IN_PROGRESS:
-                default:
-                    tap(event);
-                    break;
+              case FAILED:
+                  onError(event);
+                  break;
+              case SUCCESS:
+                  onSuccess(event);
+                  break;
+              case IN_PROGRESS:
+              default:
+                  tap(event);
+                  break;
             }
         }
     }

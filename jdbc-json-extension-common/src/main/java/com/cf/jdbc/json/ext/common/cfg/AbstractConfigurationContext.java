@@ -11,7 +11,8 @@ import com.cf.jdbc.json.ext.common.ex.IllegalConfigurationException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public abstract class AbstractConfigurationContext<K extends Serializable, C extends Configuration<K>, S extends Serializable>
+public abstract class AbstractConfigurationContext<K extends Serializable, C 
+    extends Configuration<K>, S extends Serializable>
         implements ConfigurationContext<K, C> {
 
     private static final long serialVersionUID = 10001L;

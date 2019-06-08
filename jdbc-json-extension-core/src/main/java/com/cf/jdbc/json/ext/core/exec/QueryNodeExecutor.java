@@ -6,6 +6,7 @@ import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
 
 import com.cf.jdbc.json.ext.common.dto.ResponseBuilder;
 import com.cf.jdbc.json.ext.common.exec.ActionExecutor;
@@ -82,7 +83,7 @@ public class QueryNodeExecutor extends ActionExecutor<QueryActionNode, ResultNod
                     }
                 }
             }
-        } catch (InterruptedException | ExecutionException exception) {
+        } catch (InterruptedException | ExecutionException | RejectedExecutionException exception) {
             log.error(exception.getMessage(), exception);
             responseBuilder.withError(exception.getMessage());
             cancelTasks(resultFutures);

@@ -21,5 +21,5 @@ public class StringUtils {
             return a.equals(b);
         }
         return a.equalsIgnoreCase(b);
-    };
+    }
 }

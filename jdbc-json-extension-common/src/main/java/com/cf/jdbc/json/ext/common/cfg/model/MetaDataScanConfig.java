@@ -15,9 +15,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class MetaDataScanConfig extends Configuration<DatabaseInformation> implements ValidationSupport {
 
     public enum NamedQueryConstants {
-        ALL_TABLES_FOR_SCHEMA, ALL_TABLE_NAMES_FOR_SCHEMA, 
-        ALL_COLUMNS_FOR_TABLE, ALL_COLUMN_NAMES_FOR_TABLE, 
-        ALL_CONSTRAINTS, ALL_CONSTRAINTS_FOR_TABLE;
+        ALL_TABLES_FOR_SCHEMA, ALL_TABLE_NAMES_FOR_SCHEMA, ALL_COLUMNS_FOR_TABLE, 
+        ALL_COLUMN_NAMES_FOR_TABLE, ALL_CONSTRAINTS, ALL_CONSTRAINTS_FOR_TABLE;
 
         public static final Set<NamedQueryConstants> VALUE_SET =
                 Stream.of(NamedQueryConstants.values()).collect(Collectors.toSet());
@@ -53,7 +52,7 @@ public class MetaDataScanConfig extends Configuration<DatabaseInformation> imple
     public boolean isValid() {
         boolean hasAllQueries =
                 NamedQueryConstants.VALUE_SET.parallelStream().allMatch(name -> queries.containsKey(name.name()));
-        if(!hasAllQueries) {
+        if (!hasAllQueries) {
             return false;
         }
         return queries.values().parallelStream().allMatch(text -> StringUtils.hasText(text));

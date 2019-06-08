@@ -14,6 +14,7 @@ import com.cf.jdbc.json.ext.common.query.ActionNodeExecutor;
 import com.cf.jdbc.json.ext.common.query.Query;
 import com.cf.jdbc.json.ext.common.utils.StringUtils;
 import com.cf.jdbc.json.ext.core.query.QueryActionNode;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -51,7 +52,7 @@ public class JdbcQueryExecutor implements ActionNodeExecutor<QueryActionNode> {
             }
             return resultDataSet;
         } catch (SQLException exception) {
-            log.error(exception.getMessage(), exception);
+            log.error("Failed to execute SQL: [ {} ]", executableSql, exception);
             throw new RuntimeException(exception);
         }
     }

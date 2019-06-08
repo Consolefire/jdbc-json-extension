@@ -16,7 +16,7 @@ import lombok.Getter;
 /**
  * @author sdas
  *
- * @param <K>
+ * @param <K> key.
  */
 public abstract class Configuration<K extends Serializable> {
     @Getter
@@ -83,7 +83,7 @@ public abstract class Configuration<K extends Serializable> {
     /**
      * Append/Update parameters without any NULL key.
      * 
-     * @param parameters
+     * @param parameters map
      */
     public void setParameters(Map<String, Object> parameters) {
         if (null != parameters && !parameters.isEmpty()) {
@@ -97,7 +97,7 @@ public abstract class Configuration<K extends Serializable> {
     /**
      * Append/Update qualifiers without NULLs.
      * 
-     * @param qualifiers
+     * @param qualifiers set
      */
     public void setQualifiers(Set<K> qualifiers) {
         if (null != qualifiers && !qualifiers.isEmpty()) {

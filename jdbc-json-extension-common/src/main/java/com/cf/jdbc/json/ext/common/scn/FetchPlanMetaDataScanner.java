@@ -6,8 +6,8 @@ import com.cf.jdbc.json.ext.common.cfg.model.FetchPlanConfig;
 
 import lombok.NonNull;
 
-public interface FetchPlanMetaDataScanner<DSK extends Serializable, FPK extends Serializable> {
+public interface FetchPlanMetaDataScanner<D extends Serializable, F extends Serializable> {
 
-    FetchPlanConfig scan(@NonNull DSK dataSourceKey, @NonNull FPK fetchPlanKey);
+    FetchPlanConfig scan(@NonNull D dataSourceKey, @NonNull F fetchPlanKey);
 
 }

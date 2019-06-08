@@ -6,6 +6,7 @@ import com.cf.jdbc.json.ext.common.cfg.meta.DatabaseMetaData;
 import com.cf.jdbc.json.ext.common.cfg.meta.TableMetaData;
 import com.cf.jdbc.json.ext.common.ex.IllegalDataSourceConfiguration;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Getter;
@@ -27,10 +28,12 @@ public class FetchPlanConfig extends Configuration<String> implements Validation
     }
 
     @Override
+    @JsonIgnore
     public boolean isValid() {
         return true;
     }
 
+    @JsonIgnore
     public TableMetaData getRootTableMetaData() {
         return databaseMetaData.getTables().stream().filter(tm -> fetch.getRoot().equalsIgnoreCase(tm.getName()))
                 .findFirst().orElseThrow(IllegalDataSourceConfiguration::new);

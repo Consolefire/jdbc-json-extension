@@ -16,6 +16,7 @@ public class ColumnMetaData {
     private final String name;
     @JsonIgnore
     private JDBCType jdbcType;
+    private String alias;
 
     @JsonCreator
     public ColumnMetaData(@JsonProperty(value = "name", required = true) String name) {
@@ -33,5 +34,12 @@ public class ColumnMetaData {
         ColumnMetaData columnMetaData = new ColumnMetaData(name);
         columnMetaData.setJdbcType(jdbcType);
         return columnMetaData;
+    }
+
+    public final String getAlias() {
+        if (null == alias) {
+            return name;
+        }
+        return alias;
     }
 }

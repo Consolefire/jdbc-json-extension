@@ -25,12 +25,27 @@ public class DatabaseMetaData {
     private boolean caseSensitive;
 
 
+    /**
+     * Get the {@link TableMetaData} for given table name.
+     * 
+     * @param tableName table name
+     * @return {@link TableMetaData}
+     * @throws IllegalDataSourceConfiguration if the table is not present
+     */
     public TableMetaData getTableMetaData(String tableName) {
         if (null == tables || tables.isEmpty()) {
             return null;
         }
         return tables.parallelStream().filter(t -> StringUtils.isEqual(tableName, t.getName(), caseSensitive))
                 .findFirst().orElseThrow(IllegalDataSourceConfiguration::new);
+    }
+
+    public TableMetaData findTableMetaData(String tableName) {
+        if (null == tables || tables.isEmpty()) {
+            return null;
+        }
+        return tables.parallelStream().filter(t -> StringUtils.isEqual(tableName, t.getName(), caseSensitive))
+                .findFirst().orElse(null);
     }
 
     public final void merge(final DatabaseMetaData scannedMetaData) {

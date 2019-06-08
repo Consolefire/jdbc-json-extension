@@ -5,5 +5,5 @@ export CXT_CONFIG_DATA_SOURCE=$DIR/config/context/datasource.cfg.json
 export CXT_CONFIG_FETCH_PLAN=$DIR/config/context/fetchplan.cfg.json
 export CXT_CONFIG_MD_SCN=$DIR/config/context/metadata-scan.cfg.json
 
-$DIR/mvnw spring-boot:run -Psample
+$DIR/mvnw spring-boot:run -Pwebapp
 

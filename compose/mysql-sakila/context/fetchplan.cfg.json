@@ -1,70 +1,132 @@
+
 [
   {
-    "name": "SAKILA.SIMPLE_FETCH_FILMS_BY_ID",
+    "name": "FETCH_FILM_BY_ID",
     "qualifiers": [],
-    "select": {
-      "includes": [],
-      "excludes": [
-        "last_update"
-      ]
-    },
-    "fetch": {
-      "root": "film",
-      "parameters": [
-        "film_id"
-      ]
-    },
-    "enableJoin": false,
+    "parameters": {},
+    "dataSourceName": "SAKILA_LOCAL_MYSQL",
+    "select": null,
     "databaseMetaData": {
       "schema": "sakila",
-      "scanMode": "REFRESH",
+      "scanMode": "NONE",
       "tables": [
         {
-          "name": "film",
+          "name": "film_category",
           "columns": [
             {
               "name": "film_id"
             },
             {
-              "name": "title"
+              "name": "last_update"
             },
             {
-              "name": "description"
-            },
-            {
-              "name": "release_year"
-            },
-            {
-              "name": "language_id"
-            },
-            {
-              "name": "original_language_id"
-            },
-            {
-              "name": "rental_duration"
-            },
-            {
-              "name": "rental_rate"
-            },
-            {
-              "name": "length"
-            },
-            {
-              "name": "replacement_cost"
-            },
-            {
-              "name": "rating"
-            },
-            {
-              "name": "special_features"
+              "name": "category_id"
             }
           ],
+          "select": null,
           "references": {
-            "filmActors": {
-              "collection": true,
-              "table": "film_actor",
-              "column": "film_id",
-              "referenceTo": "film_id"
+            "category_category_id": {
+              "table": "category",
+              "column": "category_id",
+              "referenceTo": "category_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            }
+          }
+        },
+        {
+          "name": "country",
+          "columns": [
+            {
+              "name": "last_update"
+            },
+            {
+              "name": "country_id"
+            },
+            {
+              "name": "country"
+            }
+          ],
+          "select": null,
+          "references": {}
+        },
+        {
+          "name": "address",
+          "columns": [
+            {
+              "name": "phone"
+            },
+            {
+              "name": "last_update"
+            },
+            {
+              "name": "address"
+            },
+            {
+              "name": "district"
+            },
+            {
+              "name": "postal_code"
+            },
+            {
+              "name": "city_id"
+            },
+            {
+              "name": "address_id"
+            },
+            {
+              "name": "location"
+            },
+            {
+              "name": "address2"
+            }
+          ],
+          "select": null,
+          "references": {
+            "country_country_id": {
+              "table": "country",
+              "column": "country_id",
+              "referenceTo": "country_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "city_city_id": {
+              "table": "city",
+              "column": "city_id",
+              "referenceTo": "city_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            }
+          }
+        },
+        {
+          "name": "city",
+          "columns": [
+            {
+              "name": "country_id"
+            },
+            {
+              "name": "last_update"
+            },
+            {
+              "name": "city_id"
+            },
+            {
+              "name": "city"
+            }
+          ],
+          "select": null,
+          "references": {
+            "country_country_id": {
+              "table": "country",
+              "column": "country_id",
+              "referenceTo": "country_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
             }
           }
         },
@@ -81,73 +143,208 @@
               "name": "last_update"
             }
           ],
+          "select": null,
           "references": {
-            "actor": {
-              "collection": false,
+            "actor_actor_id": {
               "table": "actor",
               "column": "actor_id",
-              "referenceTo": "actor_id"
-            }
-          }
-        },
-        {
-          "name": "actor",
-          "columns": [
-            {
-              "name": "actor_id"
-            },
-            {
-              "name": "first_name"
-            },
-            {
-              "name": "last_name"
-            },
-            {
-              "name": "last_update"
-            }
-          ]
-        },
-        {
-          "name": "film_category",
-          "columns": [
-            {
-              "name": "film_id"
-            },
-            {
-              "name": "category_id"
-            },
-            {
-              "name": "last_update"
-            }
-          ],
-          "references": {
-            "category": {
+              "referenceTo": "actor_id",
               "collection": false,
-              "table": "category",
-              "column": "category_id",
-              "referenceTo": "category_id"
+              "inverse": false,
+              "uniqueOn": null
             }
           }
         },
         {
-          "name": "category",
+          "name": "language",
           "columns": [
             {
               "name": "name"
             },
             {
-              "name": "category_id"
+              "name": "last_update"
+            },
+            {
+              "name": "language_id"
+            }
+          ],
+          "select": null,
+          "references": {}
+        },
+        {
+          "name": "rental",
+          "columns": [
+            {
+              "name": "rental_date"
             },
             {
               "name": "last_update"
+            },
+            {
+              "name": "customer_id"
+            },
+            {
+              "name": "return_date"
+            },
+            {
+              "name": "rental_id"
+            },
+            {
+              "name": "inventory_id"
+            },
+            {
+              "name": "staff_id"
             }
-          ]
+          ],
+          "select": null,
+          "references": {
+            "payment_rental_id": {
+              "table": "payment",
+              "column": "rental_id",
+              "referenceTo": "rental_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "country_country_id": {
+              "table": "country",
+              "column": "country_id",
+              "referenceTo": "country_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "address_address_id": {
+              "table": "address",
+              "column": "address_id",
+              "referenceTo": "address_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "city_city_id": {
+              "table": "city",
+              "column": "city_id",
+              "referenceTo": "city_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "customer_customer_id": {
+              "table": "customer",
+              "column": "customer_id",
+              "referenceTo": "customer_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            }
+          }
+        },
+        {
+          "name": "store",
+          "columns": [
+            {
+              "name": "last_update"
+            },
+            {
+              "name": "store_id"
+            },
+            {
+              "name": "manager_staff_id"
+            },
+            {
+              "name": "address_id"
+            }
+          ],
+          "select": null,
+          "references": {
+            "payment_rental_id": {
+              "table": "payment",
+              "column": "rental_id",
+              "referenceTo": "rental_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "country_country_id": {
+              "table": "country",
+              "column": "country_id",
+              "referenceTo": "country_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "rental_staff_id": {
+              "table": "rental",
+              "column": "staff_id",
+              "referenceTo": "staff_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "payment_staff_id": {
+              "table": "payment",
+              "column": "staff_id",
+              "referenceTo": "staff_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "customer_store_id": {
+              "table": "customer",
+              "column": "store_id",
+              "referenceTo": "store_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "staff_manager_staff_id": {
+              "table": "staff",
+              "column": "staff_id",
+              "referenceTo": "manager_staff_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "staff_store_id": {
+              "table": "staff",
+              "column": "store_id",
+              "referenceTo": "store_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "address_address_id": {
+              "table": "address",
+              "column": "address_id",
+              "referenceTo": "address_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "city_city_id": {
+              "table": "city",
+              "column": "city_id",
+              "referenceTo": "city_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "customer_customer_id": {
+              "table": "customer",
+              "column": "customer_id",
+              "referenceTo": "customer_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            }
+          }
         },
         {
           "name": "inventory",
           "columns": [
             {
-              "name": "inventory_id"
+              "name": "last_update"
             },
             {
               "name": "film_id"
@@ -156,62 +353,114 @@
               "name": "store_id"
             },
             {
-              "name": "last_update"
+              "name": "inventory_id"
             }
-          ]
-        }
-      ]
-    }
-  },
-  {
-    "name": "SAKILA.DEEP_FETCH_FILMS_BY_ID",
-    "qualifiers": [],
-    "select": {
-      "includes": [],
-      "excludes": [
-        "last_update"
-      ]
-    },
-    "fetch": {
-      "root": "film",
-      "parameters": [
-        "film_id"
-      ]
-    },
-    "enableJoin": false,
-    "databaseMetaData": {
-      "schema": "sakila",
-      "scanMode": "REFRESH",
-      "tables": [
+          ],
+          "select": null,
+          "references": {
+            "store_store_id": {
+              "table": "store",
+              "column": "store_id",
+              "referenceTo": "store_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "payment_rental_id": {
+              "table": "payment",
+              "column": "rental_id",
+              "referenceTo": "rental_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "country_country_id": {
+              "table": "country",
+              "column": "country_id",
+              "referenceTo": "country_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "rental_staff_id": {
+              "table": "rental",
+              "column": "staff_id",
+              "referenceTo": "staff_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "payment_staff_id": {
+              "table": "payment",
+              "column": "staff_id",
+              "referenceTo": "staff_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "rental_inventory_id": {
+              "table": "rental",
+              "column": "inventory_id",
+              "referenceTo": "inventory_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "customer_store_id": {
+              "table": "customer",
+              "column": "store_id",
+              "referenceTo": "store_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "staff_manager_staff_id": {
+              "table": "staff",
+              "column": "staff_id",
+              "referenceTo": "manager_staff_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "staff_store_id": {
+              "table": "staff",
+              "column": "store_id",
+              "referenceTo": "store_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "address_address_id": {
+              "table": "address",
+              "column": "address_id",
+              "referenceTo": "address_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "city_city_id": {
+              "table": "city",
+              "column": "city_id",
+              "referenceTo": "city_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "customer_customer_id": {
+              "table": "customer",
+              "column": "customer_id",
+              "referenceTo": "customer_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            }
+          }
+        },
         {
           "name": "film",
           "columns": [
             {
-              "name": "film_id"
-            },
-            {
-              "name": "title"
-            },
-            {
               "name": "description"
-            },
-            {
-              "name": "release_year"
-            },
-            {
-              "name": "language_id"
-            },
-            {
-              "name": "original_language_id"
-            },
-            {
-              "name": "rental_duration"
-            },
-            {
-              "name": "rental_rate"
-            },
-            {
-              "name": "length"
             },
             {
               "name": "replacement_cost"
@@ -220,49 +469,189 @@
               "name": "rating"
             },
             {
+              "name": "length"
+            },
+            {
+              "name": "language_id"
+            },
+            {
+              "name": "release_year"
+            },
+            {
+              "name": "title"
+            },
+            {
+              "name": "rental_rate"
+            },
+            {
+              "name": "last_update"
+            },
+            {
+              "name": "rental_duration"
+            },
+            {
+              "name": "original_language_id"
+            },
+            {
+              "name": "film_id"
+            },
+            {
               "name": "special_features"
             }
           ],
+          "select": null,
           "references": {
-            "filmActors": {
-              "collection": true,
+            "store_store_id": {
+              "table": "store",
+              "column": "store_id",
+              "referenceTo": "store_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "payment_rental_id": {
+              "table": "payment",
+              "column": "rental_id",
+              "referenceTo": "rental_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "country_country_id": {
+              "table": "country",
+              "column": "country_id",
+              "referenceTo": "country_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "rental_staff_id": {
+              "table": "rental",
+              "column": "staff_id",
+              "referenceTo": "staff_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "category_category_id": {
+              "table": "category",
+              "column": "category_id",
+              "referenceTo": "category_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "film_actor_film_id": {
               "table": "film_actor",
               "column": "film_id",
-              "referenceTo": "film_id"
-            },
-            "filmCategories": {
-              "collection": true,
-              "table": "film_category",
-              "column": "film_id",
-              "referenceTo": "film_id"
-            },
-            "inventory": {
+              "referenceTo": "film_id",
               "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "staff_manager_staff_id": {
+              "table": "staff",
+              "column": "staff_id",
+              "referenceTo": "manager_staff_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "staff_store_id": {
+              "table": "staff",
+              "column": "store_id",
+              "referenceTo": "store_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "inventory_film_id": {
               "table": "inventory",
               "column": "film_id",
-              "referenceTo": "film_id"
-            }
-          }
-        },
-        {
-          "name": "film_actor",
-          "columns": [
-            {
-              "name": "actor_id"
-            },
-            {
-              "name": "film_id"
-            },
-            {
-              "name": "last_update"
-            }
-          ],
-          "references": {
-            "actor": {
+              "referenceTo": "film_id",
               "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "film_category_film_id": {
+              "table": "film_category",
+              "column": "film_id",
+              "referenceTo": "film_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "payment_staff_id": {
+              "table": "payment",
+              "column": "staff_id",
+              "referenceTo": "staff_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "language_original_language_id": {
+              "table": "language",
+              "column": "language_id",
+              "referenceTo": "original_language_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "language_language_id": {
+              "table": "language",
+              "column": "language_id",
+              "referenceTo": "language_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "rental_inventory_id": {
+              "table": "rental",
+              "column": "inventory_id",
+              "referenceTo": "inventory_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "customer_store_id": {
+              "table": "customer",
+              "column": "store_id",
+              "referenceTo": "store_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "address_address_id": {
+              "table": "address",
+              "column": "address_id",
+              "referenceTo": "address_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "actor_actor_id": {
               "table": "actor",
               "column": "actor_id",
-              "referenceTo": "actor_id"
+              "referenceTo": "actor_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "city_city_id": {
+              "table": "city",
+              "column": "city_id",
+              "referenceTo": "city_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "customer_customer_id": {
+              "table": "customer",
+              "column": "customer_id",
+              "referenceTo": "customer_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
             }
           }
         },
@@ -270,38 +659,235 @@
           "name": "actor",
           "columns": [
             {
-              "name": "actor_id"
+              "name": "last_name"
             },
             {
               "name": "first_name"
             },
             {
+              "name": "last_update"
+            },
+            {
+              "name": "actor_id"
+            }
+          ],
+          "select": null,
+          "references": {}
+        },
+        {
+          "name": "staff",
+          "columns": [
+            {
+              "name": "email"
+            },
+            {
+              "name": "address_id"
+            },
+            {
+              "name": "username"
+            },
+            {
               "name": "last_name"
             },
             {
-              "name": "last_update"
-            }
-          ]
-        },
-        {
-          "name": "film_category",
-          "columns": [
-            {
-              "name": "film_id"
+              "name": "picture"
             },
             {
-              "name": "category_id"
+              "name": "store_id"
+            },
+            {
+              "name": "active"
+            },
+            {
+              "name": "staff_id"
+            },
+            {
+              "name": "first_name"
+            },
+            {
+              "name": "last_update"
+            },
+            {
+              "name": "password"
+            }
+          ],
+          "select": null,
+          "references": {
+            "payment_rental_id": {
+              "table": "payment",
+              "column": "rental_id",
+              "referenceTo": "rental_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "country_country_id": {
+              "table": "country",
+              "column": "country_id",
+              "referenceTo": "country_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "rental_staff_id": {
+              "table": "rental",
+              "column": "staff_id",
+              "referenceTo": "staff_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "payment_staff_id": {
+              "table": "payment",
+              "column": "staff_id",
+              "referenceTo": "staff_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "address_address_id": {
+              "table": "address",
+              "column": "address_id",
+              "referenceTo": "address_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "city_city_id": {
+              "table": "city",
+              "column": "city_id",
+              "referenceTo": "city_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "customer_customer_id": {
+              "table": "customer",
+              "column": "customer_id",
+              "referenceTo": "customer_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            }
+          }
+        },
+        {
+          "name": "payment",
+          "columns": [
+            {
+              "name": "payment_id"
+            },
+            {
+              "name": "staff_id"
+            },
+            {
+              "name": "customer_id"
+            },
+            {
+              "name": "amount"
+            },
+            {
+              "name": "payment_date"
+            },
+            {
+              "name": "rental_id"
             },
             {
               "name": "last_update"
             }
           ],
+          "select": null,
           "references": {
-            "category": {
+            "country_country_id": {
+              "table": "country",
+              "column": "country_id",
+              "referenceTo": "country_id",
               "collection": false,
-              "table": "category",
-              "column": "category_id",
-              "referenceTo": "category_id"
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "address_address_id": {
+              "table": "address",
+              "column": "address_id",
+              "referenceTo": "address_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "city_city_id": {
+              "table": "city",
+              "column": "city_id",
+              "referenceTo": "city_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "customer_customer_id": {
+              "table": "customer",
+              "column": "customer_id",
+              "referenceTo": "customer_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            }
+          }
+        },
+        {
+          "name": "customer",
+          "columns": [
+            {
+              "name": "address_id"
+            },
+            {
+              "name": "email"
+            },
+            {
+              "name": "create_date"
+            },
+            {
+              "name": "customer_id"
+            },
+            {
+              "name": "store_id"
+            },
+            {
+              "name": "last_name"
+            },
+            {
+              "name": "first_name"
+            },
+            {
+              "name": "last_update"
+            },
+            {
+              "name": "active"
+            }
+          ],
+          "select": null,
+          "references": {
+            "country_country_id": {
+              "table": "country",
+              "column": "country_id",
+              "referenceTo": "country_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "address_address_id": {
+              "table": "address",
+              "column": "address_id",
+              "referenceTo": "address_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
+            },
+            "city_city_id": {
+              "table": "city",
+              "column": "city_id",
+              "referenceTo": "city_id",
+              "collection": false,
+              "inverse": false,
+              "uniqueOn": null
             }
           }
         },
@@ -309,34 +895,27 @@
           "name": "category",
           "columns": [
             {
-              "name": "name"
-            },
-            {
               "name": "category_id"
             },
             {
-              "name": "last_update"
-            }
-          ]
-        },
-        {
-          "name": "inventory",
-          "columns": [
-            {
-              "name": "inventory_id"
-            },
-            {
-              "name": "film_id"
-            },
-            {
-              "name": "store_id"
+              "name": "name"
             },
             {
               "name": "last_update"
             }
-          ]
+          ],
+          "select": null,
+          "references": {}
         }
+      ],
+      "caseSensitive": false
+    },
+    "fetch": {
+      "root": "film",
+      "parameters": [
+        "film_id"
       ]
-    }
+    },
+    "enableJoin": false
   }
 ]

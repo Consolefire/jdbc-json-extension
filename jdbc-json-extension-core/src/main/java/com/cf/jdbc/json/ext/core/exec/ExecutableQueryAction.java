@@ -74,6 +74,23 @@ public class ExecutableQueryAction extends ExecutableAction<QueryActionNode, Res
         }
         return null;
     }
+    
+    @Override
+    public <X extends ExecutableAction<QueryActionNode, ResultNode>> List<X> getNextExecutableActions(
+            @NonNull final ResultNode parent) {
+        List<X> nextNodes = new ArrayList<>();
+        if (hasNext()) {
+            getNextActions().forEach(action -> {
+                ExecutableQueryAction nextChild = (ExecutableQueryAction) action.copy();
+                nextChild.setParentResult(parent);
+                nextChild.setExecutionContext(
+                        action.getExecutionContext().copyWithParameters(parent.getResultDataSet().getRow(0)));
+                nextChild.parameterExtractor = ParameterExtractor.CONTEXT_PARAMETER_EXTRACTOR;
+                nextNodes.add((X) nextChild);
+            });
+        }
+        return nextNodes;
+    }
 
     private ParameterExtractor getParameterExtractor() {
         if (null == this.parameterExtractor) {
@@ -92,23 +109,6 @@ public class ExecutableQueryAction extends ExecutableAction<QueryActionNode, Res
         action.parentAction = this.parentAction;
         action.queryExecutor = this.queryExecutor;
         return action;
-    }
-
-    @Override
-    public <X extends ExecutableAction<QueryActionNode, ResultNode>> List<X> getNextExecutableActions(
-            @NonNull final ResultNode parent) {
-        List<X> nextNodes = new ArrayList<>();
-        if (hasNext()) {
-            getNextActions().forEach(action -> {
-                ExecutableQueryAction nextChild = (ExecutableQueryAction) action.copy();
-                nextChild.setParentResult(parent);
-                nextChild.setExecutionContext(
-                        action.getExecutionContext().copyWithParameters(parent.getResultDataSet().getRow(0)));
-                nextChild.parameterExtractor = ParameterExtractor.CONTEXT_PARAMETER_EXTRACTOR;
-                nextNodes.add((X) nextChild);
-            });
-        }
-        return nextNodes;
     }
 
     @Override

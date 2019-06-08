@@ -1,8 +1,10 @@
 package com.cf.jdbc.json.ext.common.cfg.meta;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -13,7 +15,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Getter
 @Setter
 public class TableMetaData {
@@ -89,6 +93,10 @@ public class TableMetaData {
                 columns.parallelStream().collect(Collectors.toMap(ColumnMetaData::getName, Function.identity())));
     }
 
+    public final TableMetaData copy() {
+        return copy(false);
+    }
+
     public final TableMetaData copy(boolean reference) {
         TableMetaData tableMetaData = new TableMetaData(name);
         Set<ColumnMetaData> columns = new HashSet<>();
@@ -96,7 +104,58 @@ public class TableMetaData {
         if (reference) {
             // TODO: copy references
         }
+        tableMetaData.setColumns(columns);
         return tableMetaData;
     }
+
+    public void addReference(String name, Reference reference) {
+        if (null == reference) {
+            return;
+        }
+        if (null == name) {
+            name = reference.getTable();
+        }
+        if (null == this.references) {
+            this.references = new HashMap<>();
+        }
+        if (this.references.containsKey(name)) {
+            log.warn("Reference [ " + name + " ] alredy added  to : " + this.name);
+            return;
+        }
+        this.references.put(name, reference);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof TableMetaData)) {
+            return false;
+        }
+        TableMetaData other = (TableMetaData) obj;
+        return Objects.equals(name, other.name);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Table [");
+        if (name != null) {
+            builder.append("name=").append(name);
+        }
+        builder.append("]");
+        return builder.toString();
+    }
+
+
 
 }

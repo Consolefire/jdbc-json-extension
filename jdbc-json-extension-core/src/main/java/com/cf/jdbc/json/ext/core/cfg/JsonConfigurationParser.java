@@ -3,12 +3,11 @@ package com.cf.jdbc.json.ext.core.cfg;
 import java.io.IOException;
 import java.util.Collection;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.cf.jdbc.json.ext.common.cfg.ConfigurationParser;
 import com.cf.jdbc.json.ext.common.cfg.model.Configuration;
 import com.cf.jdbc.json.ext.common.ex.IllegalConfigurationException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JsonConfigurationParser<T extends Configuration<?>, C extends Collection<T>>
         implements ConfigurationParser<String, T, C> {

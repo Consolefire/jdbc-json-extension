@@ -1,0 +1,27 @@
+server:
+  port: ${SERVER_PORT:18080}
+
+logging:
+  level: 
+    com.cf.jdbc: debug
+    
+spring:
+  application:
+    name: ${APP_NAME:jdbc-json-ext-api}
+  cloud:
+    config:
+      enabled: false
+    discovery:
+      enabled: false
+eureka:
+  client:
+    enabled: false
+
+context:
+  config:
+    classpath: ${CXT_CONFIG_CLASSPATH:true}
+    datasource: ${CXT_CONFIG_DATA_SOURCE:/context/datasource.cfg.json}
+    fetchplan: ${CXT_CONFIG_FETCH_PLAN:/context/fetchplan.cfg.json}
+    metadata: ${CXT_CONFIG_MD_SCN:/context/metadata-scan.cfg.json}
+  exec:
+    logOnly: false

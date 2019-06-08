@@ -59,26 +59,42 @@ public class GenericJdbcMetaDataScanner extends AbstractMetaDataScanner {
         try (ResultSet fkRs = connectionMetaData.getExportedKeys(schemaName, schemaName, tableName);) {
             while (fkRs.next()) {
                 Reference reference = new Reference();
+                String pkTable = fkRs.getString("PKTABLE_NAME");
+                String pkColumn = fkRs.getString("PKCOLUMN_NAME");
                 String fkTable = fkRs.getString("FKTABLE_NAME");
                 String fkColumn = fkRs.getString("FKCOLUMN_NAME");
+                log.info("Forword Reference: {}.{} -> {}.{}", pkTable, pkColumn, fkTable, fkColumn);
+                if (!tableName.equals(pkTable)) {
+                    log.warn("Invalid Forword Reference: {}.{} -> {}.{}", pkTable, pkColumn, fkTable, fkColumn);
+                    continue;
+                }
+                reference.setColumn(pkColumn);
                 reference.setTable(fkTable);
-                reference.setColumn(fkColumn);
-                reference.setReferenceTo(fkRs.getString("PKCOLUMN_NAME"));
+                reference.setReferenceTo(fkColumn);
                 reference.setCollection(true);
-                reference.setInverse(true);
+                reference.setInverse(false);
                 referenceMap.put(UUID.randomUUID().toString(), reference);
             }
         }
         try (ResultSet fkRs = connectionMetaData.getImportedKeys(schemaName, schemaName, tableName);) {
             while (fkRs.next()) {
                 Reference reference = new Reference();
-                String fkTable = fkRs.getString("PKTABLE_NAME");
-                String fkColumn = fkRs.getString("PKCOLUMN_NAME");
+
+                String pkTable = fkRs.getString("PKTABLE_NAME");
+                String pkColumn = fkRs.getString("PKCOLUMN_NAME");
+                String fkTable = fkRs.getString("FKTABLE_NAME");
+                String fkColumn = fkRs.getString("FKCOLUMN_NAME");
+                log.info("Inverse Reference: {}.{} -> {}.{}", pkTable, pkColumn, fkTable, fkColumn);
+                if (!tableName.equals(fkTable)) {
+                    log.warn("Invalid Inverse Reference: {}.{} -> {}.{}", pkTable, pkColumn, fkTable, fkColumn);
+                    continue;
+                }
+                reference.setColumn(pkColumn);
                 reference.setTable(fkTable);
-                reference.setColumn(fkColumn);
-                reference.setReferenceTo(fkRs.getString("FKCOLUMN_NAME"));
+                reference.setReferenceTo(fkColumn);
+
                 reference.setCollection(true);
-                reference.setInverse(false);
+                reference.setInverse(true);
                 referenceMap.put(UUID.randomUUID().toString(), reference);
             }
         }

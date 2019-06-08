@@ -1,0 +1,11 @@
+DIR=$(pwd)
+
+export CXT_CONFIG_CLASSPATH=false
+export CXT_CONFIG_DATA_SOURCE=$DIR/config/context/datasource.cfg.json
+export CXT_CONFIG_FETCH_PLAN=$DIR/config/context/fetchplan.cfg.json
+export CXT_CONFIG_MD_SCN=$DIR/config/context/metadata-scan.cfg.json
+
+JAR_PATH=$DIR/jdbc-json-extension-application/jdbc-json-extension-webapp/target/jdbc-json-extension-webapp-1.5.0-SNAPSHOT.jar
+
+java -jar $JAR_PATH
+

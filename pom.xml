@@ -6,12 +6,16 @@
 
 	<groupId>com.consolefire</groupId>
 	<artifactId>jdbc-json-extension</artifactId>
-	<version>1.4.3-SNAPSHOT</version>
+	<version>1.5.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>ConsoleFire > JDBC JSON Extension</name>
+	<name>ConsoleFire &gt; JDBC JSON Extension</name>
 	<url>https://github.com/Consolefire/jdbc-json-extension</url>
 	<description>
-		`jdbc-json-extension` is to fetch data from RDBMS in JSON format. The data is structured the in the same relation structure of the Tables relationships in the database. The fetch is pre-planned using a `FetchPlan` configuration. The execution is multithreaded tree pattern where it starts from the `root` table with supplied filter parameters. The subsequent nodes (tables) are fetched as the `One-to-*` relationship defined from the root tables.
+		`jdbc-json-extension` is to fetch data from RDBMS in JSON format. 
+		The data is structured the in the same relation structure of the Tables relationships in the database. 
+		The fetch is pre-planned using a `FetchPlan` configuration. The execution is multithreaded 
+		tree pattern where it starts from the `root` table with supplied filter parameters. The subsequent nodes 
+		(tables) are fetched as the `One-to-*` relationship defined from the root tables.
 	</description>
 
 	<licenses>
@@ -64,6 +68,8 @@
 		<lombok.version>1.18.6</lombok.version>
 		<slf4j.version>1.7.26</slf4j.version>
 		<fasterxml.jackson.version>2.9.9</fasterxml.jackson.version>
+		<google.guava.version>27.1-jre</google.guava.version>
+
 		<junit.platform.version>1.4.1</junit.platform.version>
 		<junit5.version>5.3.1</junit5.version>
 		<mockito.junit5.version>2.23.0</mockito.junit5.version>
@@ -72,15 +78,15 @@
 		<checkstyle.plugin.version>3.0.0</checkstyle.plugin.version>
 		<checkstyle.version>8.20</checkstyle.version>
 
-		<bootrun.debug.port>17075</bootrun.debug.port>
-		<bootrun.debug.suspend>n</bootrun.debug.suspend>
 		<CONFIG_ROOT>${maven.multiModuleProjectDirectory}/config</CONFIG_ROOT>
-		<skip.bootrepackage>false</skip.bootrepackage>
-		<skip.bootrun>true</skip.bootrun>
+
 		<!-- Github Properties -->
 		<github.global.server>github</github.global.server>
-	</properties>
 
+		<skip.maven.source.plugin>true</skip.maven.source.plugin>
+		<skip.maven.javadoc.plugin>true</skip.maven.javadoc.plugin>
+		<skip.spring.boot.plugin>false</skip.spring.boot.plugin>
+	</properties>
 
 	<dependencies>
 		<dependency>
@@ -155,7 +161,6 @@
 
 
 	<build>
-
 		<plugins>
 			<plugin>
 				<artifactId>maven-site-plugin</artifactId>
@@ -178,6 +183,7 @@
 				<version>3.0.1</version>
 				<configuration>
 					<attach>true</attach>
+					<skipSource>${skip.maven.source.plugin}</skipSource>
 				</configuration>
 				<executions>
 					<execution>
@@ -192,6 +198,9 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>3.1.0</version>
+				<configuration>
+					<skip>${skip.maven.javadoc.plugin}</skip>
+				</configuration>
 				<executions>
 					<execution>
 						<id>attach-javadocs</id>
@@ -215,11 +224,13 @@
 				<configuration>
 					<skip>true</skip>
 					<configLocation>${CONFIG_ROOT}/code/checkstyle/checkstyle.xml</configLocation>
+					<suppressionsLocation>${CONFIG_ROOT}/code/checkstyle/suppressions.xml</suppressionsLocation>
+					<suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
 					<encoding>UTF-8</encoding>
-					<consoleOutput>false</consoleOutput>
+					<consoleOutput>true</consoleOutput>
 					<linkXRef>false</linkXRef>
-					<failsOnError>false</failsOnError>
-					<failOnViolation>false</failOnViolation>
+					<failsOnError>true</failsOnError>
+					<failOnViolation>true</failOnViolation>
 					<maxAllowedViolations>0</maxAllowedViolations>
 				</configuration>
 				<executions>
@@ -241,9 +252,27 @@
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
+			<properties>
+				<skip.maven.source.plugin>false</skip.maven.source.plugin>
+				<skip.maven.javadoc.plugin>false</skip.maven.javadoc.plugin>
+			</properties>
 			<modules>
 				<module>jdbc-json-extension-common</module>
 				<module>jdbc-json-extension-core</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>all</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<skip.spring.boot.plugin>true</skip.spring.boot.plugin>
+			</properties>
+			<modules>
+				<module>jdbc-json-extension-common</module>
+				<module>jdbc-json-extension-core</module>
+				<module>jdbc-json-extension-application</module>
 			</modules>
 		</profile>
 
@@ -252,6 +281,10 @@
 			<activation>
 				<activeByDefault>false</activeByDefault>
 			</activation>
+			<properties>
+				<skip.maven.source.plugin>false</skip.maven.source.plugin>
+				<skip.maven.javadoc.plugin>false</skip.maven.javadoc.plugin>
+			</properties>
 			<modules>
 				<module>jdbc-json-extension-common</module>
 				<module>jdbc-json-extension-core</module>
@@ -310,14 +343,14 @@
 		</profile>
 
 		<profile>
-			<id>sample</id>
+			<id>webapp</id>
 			<activation>
 				<activeByDefault>false</activeByDefault>
 			</activation>
 			<modules>
 				<module>jdbc-json-extension-common</module>
 				<module>jdbc-json-extension-core</module>
-				<module>jdbc-json-extension-sample</module>
+				<module>jdbc-json-extension-application</module>
 			</modules>
 			<dependencyManagement>
 				<dependencies>
@@ -339,6 +372,7 @@
 						<artifactId>spring-boot-maven-plugin</artifactId>
 						<configuration>
 							<skip>true</skip>
+							<addResources>true</addResources>
 						</configuration>
 						<executions>
 							<execution>
@@ -352,95 +386,25 @@
 				</plugins>
 			</build>
 		</profile>
+
+
+
+
 		<profile>
 			<id>docker</id>
 			<activation>
 				<activeByDefault>false</activeByDefault>
 			</activation>
 			<properties>
-				<skip.bootrun>true</skip.bootrun>
-				<skip.bootrepackage>false</skip.bootrepackage>
+				<maven.test.skip>true</maven.test.skip>
 			</properties>
 			<modules>
-				<module>jdbc-json-extension-sample</module>
+				<module>jdbc-json-extension-application</module>
 			</modules>
-			<build>
-				<pluginManagement>
-					<plugins>
-						<plugin>
-							<groupId>io.fabric8</groupId>
-							<artifactId>docker-maven-plugin</artifactId>
-							<version>0.28.0</version>
-							<dependencies>
-								<dependency>
-									<groupId>io.fabric8</groupId>
-									<artifactId>run-java-sh</artifactId>
-									<version>1.2.2</version>
-								</dependency>
-							</dependencies>
-
-							<executions>
-								<execution>
-									<id>image-build</id>
-									<phase>package</phase>
-									<goals>
-										<goal>build</goal>
-									</goals>
-									<configuration>
-										<useColor>true</useColor>
-										<registry>docker.io</registry>
-										<verbose>true</verbose>
-										<images>
-											<image>
-												<alias>${project.artifactId}</alias>
-												<name>consolefire/jdbc-json-ext</name>
-												<build>
-													<from>java:8</from>
-													<dockerFileDir>${CONFIG_ROOT}/docker/</dockerFileDir>
-													<dockerFile>Dockerfile</dockerFile>
-													<filter>@{*}</filter>
-													<env>
-														<JAVA_OPTS>-Djava.security.egd=file:/dev/./urandom</JAVA_OPTS>
-													</env>
-													<assembly>
-														<basedir>/</basedir>
-														<descriptor>${CONFIG_ROOT}/docker/assembly.xml</descriptor>
-													</assembly>
-												</build>
-											</image>
-										</images>
-									</configuration>
-								</execution>
-								<execution>
-									<id>image-push</id>
-									<phase>deploy</phase>
-									<goals>
-										<goal>push</goal>
-									</goals>
-									<configuration>
-										<pushRegistry>docker.io</pushRegistry>
-										<verbose>true</verbose>
-										<image>
-											<alias>${project.artifactId}</alias>
-											<name>consolefire/jdbc-json-ext</name>
-										</image>
-									</configuration>
-								</execution>
-							</executions>
-						</plugin>
-					</plugins>
-				</pluginManagement>
-				<plugins>
-					<plugin>
-						<groupId>org.springframework.boot</groupId>
-						<artifactId>spring-boot-maven-plugin</artifactId>
-						<configuration>
-							<executable>true</executable>
-							<skip>${skip.bootrepackage}</skip>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
 		</profile>
+
+
+
 	</profiles>
+
 </project>
