@@ -8,7 +8,7 @@ public class JdbcJsonExtensionHomeController {
 
     @GetMapping("/")
     public String index() {
-        return "/index";
+        return "index";
     }
 
 }

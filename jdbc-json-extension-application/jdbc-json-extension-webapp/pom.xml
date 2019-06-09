@@ -57,6 +57,7 @@
 				<configuration>
 					<skip>false</skip>
 					<mainClass>com.cf.jdbc.json.ext.web.JdbcJsonExtensionWebApplication</mainClass>
+					<addResources>true</addResources>
 				</configuration>
 				<executions>
 					<execution>
@@ -103,7 +104,7 @@
 						<goals>
 							<goal>npm</goal>
 						</goals>
-						<phase>package</phase>
+						<phase>prepare-package</phase>
 						<configuration>
 							<arguments>
 								run package
@@ -131,18 +132,18 @@
 									<directory>${frontend.root.dir}/build/static</directory>
 									<filtering>false</filtering>
 									<includes>
-										<include>application.bundle.js</include>
+										<include>application.js</include>
 									</includes>
 									<targetPath>${project.build.outputDirectory}/static/</targetPath>
 								</resource>
-								<resource>
-									<directory>${frontend.root.dir}/build/static</directory>
+								<!-- <resource>
+									<directory>${frontend.root.dir}/templates</directory>
 									<includes>
 										<include>index.html</include>
 									</includes>
 									<targetPath>${project.build.outputDirectory}/templates/</targetPath>
 									<filtering>false</filtering>
-								</resource>
+								</resource> -->
 							</resources>
 						</configuration>
 
