@@ -125,6 +125,7 @@ public class ForwordReferenceJdbcMetaDataScanner extends AbstractMetaDataScanner
 
         for (final Entry<String, Reference> fwReferenceEntry : scanedFwReferences.entrySet()) {
             final String refName = fwReferenceEntry.getKey();
+            log.debug("Reference entry key: {}", refName);
             final Reference reference = fwReferenceEntry.getValue();
             final TableMetaData refTableMetaData = databaseMetaData.getTableMetaData(reference.getTable());
             if (null == refTableMetaData) {
@@ -137,6 +138,7 @@ public class ForwordReferenceJdbcMetaDataScanner extends AbstractMetaDataScanner
             nextReference.setReferenceTable(tableReference.getTableName());
             boolean isAdded = graph.addReference(tableReference, nextReference);
             if (isAdded) {
+                log.debug("Edge {} -> {} is added to graph", tableReference, nextReference);
                 tableMetaData.addReference(refName, reference);
                 prepareReferenceGraph(connectionMetaData, graph, databaseMetaData, nextReference, refTableMetaData);
             }
@@ -144,6 +146,7 @@ public class ForwordReferenceJdbcMetaDataScanner extends AbstractMetaDataScanner
 
         for (final Entry<String, Reference> inverseReferenceEntry : scanedInvReferences.entrySet()) {
             final String refName = inverseReferenceEntry.getKey();
+            log.debug("Reference entry key: {}", refName);
             final Reference inverseReference = inverseReferenceEntry.getValue();
             final TableMetaData refTableMetaData = databaseMetaData.getTableMetaData(inverseReference.getTable());
             if (null == refTableMetaData) {
@@ -156,6 +159,7 @@ public class ForwordReferenceJdbcMetaDataScanner extends AbstractMetaDataScanner
             nextReference.setReferenceTable(tableReference.getTableName());
             boolean isAdded = graph.addReference(tableReference, nextReference);
             if (isAdded) {
+                log.debug("Edge {} -> {} is added to graph", tableReference, nextReference);
                 tableMetaData.addReference(refName, inverseReference);
                 prepareReferenceGraph(connectionMetaData, graph, databaseMetaData, nextReference, refTableMetaData);
             }
@@ -199,7 +203,7 @@ public class ForwordReferenceJdbcMetaDataScanner extends AbstractMetaDataScanner
                     continue;
                 }
                 reference.setColumn(pkColumn);
-                reference.setTable(fkTable);
+                reference.setTable(pkTable);
                 reference.setReferenceTo(fkColumn);
 
                 reference.setCollection(true);

@@ -386,6 +386,51 @@
 				</plugins>
 			</build>
 		</profile>
+		
+		<profile>
+			<id>api</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<modules>
+				<module>jdbc-json-extension-common</module>
+				<module>jdbc-json-extension-core</module>
+				<module>jdbc-json-extension-application</module>
+			</modules>
+			<dependencyManagement>
+				<dependencies>
+					<dependency>
+						<!-- Import dependency management from Spring Boot -->
+						<!-- Source: https://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-build-systems.html#using-boot-maven-without-a-parent -->
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-dependencies</artifactId>
+						<version>${spring.boot.version}</version>
+						<type>pom</type>
+						<scope>import</scope>
+					</dependency>
+				</dependencies>
+			</dependencyManagement>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<configuration>
+							<skip>true</skip>
+							<addResources>true</addResources>
+						</configuration>
+						<executions>
+							<execution>
+								<id>build</id>
+								<goals>
+									<goal>repackage</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 
 
 

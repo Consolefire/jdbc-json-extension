@@ -240,7 +240,20 @@
 				<activeByDefault>false</activeByDefault>
 			</activation>
 			<modules>
+				<module>jdbc-json-extension-service</module>
 				<module>jdbc-json-extension-webapp</module>
+			</modules>
+
+		</profile>
+		
+		<profile>
+			<id>api</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<modules>
+				<module>jdbc-json-extension-service</module>
+				<module>jdbc-json-extension-api</module>
 			</modules>
 
 		</profile>

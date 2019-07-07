@@ -14,9 +14,13 @@ import com.cf.jdbc.json.ext.common.utils.StringUtils;
 import lombok.Getter;
 
 /**
- * @author sdas
+ * In general, {@code Configuration<K>} is a Key/Name based container of {@code key -> value}
+ * parameters. The key can be any object which is {@link Serializable}. The key must have a valid
+ * {@code equals()} and {@code hashcode()}.
+ * 
+ * @author Sabuj Das
  *
- * @param <K> key.
+ * @param <K> key {@code extends Serializable}
  */
 public abstract class Configuration<K extends Serializable> {
     @Getter
@@ -28,12 +32,26 @@ public abstract class Configuration<K extends Serializable> {
         this.key = key;
     }
 
+    /**
+     * Set value for parameter with name.
+     * 
+     * @param <T> expected type of value (any object)
+     * @param name of the parameter
+     * @param data value of the parameter of type {@code T}
+     */
     public <T> void setParameter(String name, T data) {
         if (StringUtils.hasText(name)) {
             this.parameters.put(name, data);
         }
     }
 
+    /**
+     * Returns the value of a parameter with name.
+     * 
+     * @param <T> expected type of value (depends on the assignment type)
+     * @param name of the parameter
+     * @return value of the parameter with name
+     */
     @SuppressWarnings("unchecked")
     public <T> T getParameter(String name) {
         if (StringUtils.hasText(name) && this.parameters.containsKey(name)) {

@@ -109,6 +109,7 @@ public class TableMetaData {
     }
 
     public void addReference(String name, Reference reference) {
+        log.debug("Add reference with name: {}", name);
         if (null == reference) {
             return;
         }
