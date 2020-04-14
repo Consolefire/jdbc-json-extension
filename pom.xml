@@ -70,7 +70,7 @@
 		<surefire.version>2.22.1</surefire.version>
 		<swagger2.version>2.8.0</swagger2.version>
 		<checkstyle.plugin.version>3.0.0</checkstyle.plugin.version>
-		<checkstyle.version>8.20</checkstyle.version>
+		<checkstyle.version>8.29</checkstyle.version>
 
 		<bootrun.debug.port>17075</bootrun.debug.port>
 		<bootrun.debug.suspend>n</bootrun.debug.suspend>
