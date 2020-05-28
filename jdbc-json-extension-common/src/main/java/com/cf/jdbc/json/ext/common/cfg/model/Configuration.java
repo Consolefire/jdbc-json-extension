@@ -21,7 +21,7 @@ import lombok.Getter;
 public abstract class Configuration<K extends Serializable> {
     @Getter
     private final K key;
-    private final Set<K> qualifiers = new HashSet<K>();
+    private final Set<K> qualifiers = new HashSet<>();
     private final Map<String, Object> parameters = new HashMap<>();
 
     public Configuration(K key) {

@@ -7,9 +7,17 @@
 	<parent>
 		<groupId>com.consolefire</groupId>
 		<artifactId>jdbc-json-extension</artifactId>
-		<version>1.4.3-SNAPSHOT</version>
+		<version>1.4.4-SNAPSHOT</version>
 	</parent>
 	<artifactId>jdbc-json-extension-common</artifactId>
 	<name>ConsoleFire > JDBC JSON Extension - Common</name>
-	
+
+	<dependencies>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>29.0-jre</version>
+		</dependency>
+
+	</dependencies>
 </project>

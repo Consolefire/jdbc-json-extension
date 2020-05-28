@@ -5,6 +5,7 @@ import com.cf.jdbc.json.ext.common.cfg.meta.ColumnSelection;
 import com.cf.jdbc.json.ext.common.cfg.meta.DatabaseMetaData;
 import com.cf.jdbc.json.ext.common.cfg.meta.TableMetaData;
 import com.cf.jdbc.json.ext.common.ex.IllegalDataSourceConfiguration;
+import com.cf.jdbc.json.ext.common.model.database.Database;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -17,9 +18,9 @@ public class FetchPlanConfig extends Configuration<String> implements Validation
 
     private String dataSourceName;
     private ColumnSelection select;
-    private DatabaseMetaData databaseMetaData;
     private FetchConfig fetch;
     private boolean enableJoin;
+    private DatabaseMetaData databaseMetaData;
 
     @JsonCreator
     public FetchPlanConfig(@JsonProperty(value = "name", required = true) String name) {
@@ -31,8 +32,4 @@ public class FetchPlanConfig extends Configuration<String> implements Validation
         return true;
     }
 
-    public TableMetaData getRootTableMetaData() {
-        return databaseMetaData.getTables().stream().filter(tm -> fetch.getRoot().equalsIgnoreCase(tm.getName()))
-                .findFirst().orElseThrow(IllegalDataSourceConfiguration::new);
-    }
 }

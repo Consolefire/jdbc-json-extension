@@ -17,7 +17,7 @@ import com.cf.jdbc.json.ext.core.query.QueryActionNode;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class JdbcQueryExecutor implements ActionNodeExecutor<QueryActionNode> {
+public class JdbcQueryActionNodeExecutor implements ActionNodeExecutor<QueryActionNode> {
 
 
     @Override

@@ -19,21 +19,27 @@ public abstract class DataSourceFactory<D extends DataSource> {
     public D getDataSource(String key) {
         DataSourceConfig configuration = getConfiguration(key);
         if (null != configuration) {
+            D dataSource = dataSourceContext.get(key);
+            if(null != dataSource){
+                return dataSource;
+            }
             if (configuration.isPoolEnabled()) {
                 try {
-                    return buildPoolingDataSource(configuration.getKey(), configuration.getConnectionConfig());
+                    dataSource = buildPoolingDataSource(configuration.getKey(), configuration.getConnectionConfig());
                 } catch (Exception e) {
                     log.error(e.getMessage(), e);
                     throw new IllegalDataSourceConfiguration(e);
                 }
             } else {
                 try {
-                    return buildDataSource(configuration.getKey(), configuration.getConnectionConfig());
+                    dataSource = buildDataSource(configuration.getKey(), configuration.getConnectionConfig());
                 } catch (Exception e) {
                     log.error(e.getMessage(), e);
                     throw new IllegalDataSourceConfiguration(e);
                 }
             }
+            dataSourceContext.put(key, dataSource);
+            return dataSource;
         }
         return null;
     }

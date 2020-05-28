@@ -1,22 +1,20 @@
 package com.cf.jdbc.json.ext.core.scn;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
-import javax.sql.DataSource;
-
-import com.cf.jdbc.json.ext.common.cfg.meta.ColumnMetaData;
-import com.cf.jdbc.json.ext.common.cfg.meta.DatabaseMetaData;
-import com.cf.jdbc.json.ext.common.cfg.meta.Reference;
-import com.cf.jdbc.json.ext.common.cfg.meta.TableMetaData;
 import com.cf.jdbc.json.ext.common.cfg.model.DatabaseInformation;
 import com.cf.jdbc.json.ext.common.ex.IllegalDataSourceConfiguration;
+import com.cf.jdbc.json.ext.common.model.database.*;
+
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.sql.DataSource;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -25,93 +23,375 @@ import lombok.extern.slf4j.Slf4j;
 public class GenericJdbcMetaDataScanner extends AbstractMetaDataScanner {
 
     @Override
-    protected DatabaseMetaData doInScan(@NonNull final String schemaName, @NonNull DataSource dataSource,
-            @NonNull DatabaseInformation information) {
+    protected Database doInScan(@NonNull final String schemaName, @NonNull DataSource dataSource,
+                                @NonNull DatabaseInformation information) {
         try (Connection connection = dataSource.getConnection();) {
-            java.sql.DatabaseMetaData connectionMetaData = connection.getMetaData();
-            DatabaseMetaData databaseMetaData = new DatabaseMetaData();
-
-            databaseMetaData.setSchema(schemaName);
-
-            Set<TableMetaData> tableMetaDatas = scanTables(connectionMetaData, schemaName);
-            databaseMetaData.setTables(tableMetaDatas);
-            if (null != tableMetaDatas && !tableMetaDatas.isEmpty()) {
-                for (TableMetaData tableMetaData : tableMetaDatas) {
-                    Set<ColumnMetaData> columnMetaDatas = scanColumns(connectionMetaData, schemaName, tableMetaData);
-                    tableMetaData.setColumns(columnMetaDatas);
-                    Map<String, Reference> references =
-                            scanReferences(connectionMetaData, schemaName, tableMetaData.getName());
-                    tableMetaData.setReferences(references);
-                }
-            }
-
-
-            return databaseMetaData;
+            return grabDatabase(connection, schemaName, ReadDepthEnum.DEEP);
         } catch (SQLException sqlException) {
             log.error(sqlException.getMessage(), sqlException);
             throw new IllegalDataSourceConfiguration(sqlException.getMessage(), sqlException);
         }
     }
 
-    private Map<String, Reference> scanReferences(java.sql.DatabaseMetaData connectionMetaData,
-            @NonNull String schemaName, String tableName) throws SQLException {
-        Map<String, Reference> referenceMap = new HashMap<>();
-        try (ResultSet fkRs = connectionMetaData.getExportedKeys(schemaName, schemaName, tableName);) {
-            while (fkRs.next()) {
-                Reference reference = new Reference();
-                String fkTable = fkRs.getString("FKTABLE_NAME");
-                String fkColumn = fkRs.getString("FKCOLUMN_NAME");
-                reference.setTable(fkTable);
-                reference.setColumn(fkColumn);
-                reference.setReferenceTo(fkRs.getString("PKCOLUMN_NAME"));
-                reference.setCollection(true);
-                reference.setInverse(true);
-                referenceMap.put(UUID.randomUUID().toString(), reference);
+    public Database grabDatabase(Connection connection, String selectedSchemaName, ReadDepthEnum readDepth) throws SQLException{
+        if(connection == null){
+            return null;
+        }
+        Database db = new Database();
+        db.setName(selectedSchemaName);
+        List<Schema> schemaList = new ArrayList<Schema>();
+        java.sql.DatabaseMetaData databaseMetaData = connection.getMetaData();
+        if(databaseMetaData != null){
+            ResultSet rs = databaseMetaData.getSchemas();
+            while(rs.next()){
+                String cat = rs.getString("TABLE_SCHEM");
+                if(null != selectedSchemaName && !"".equals(selectedSchemaName))
+                    if(!selectedSchemaName.equalsIgnoreCase(cat)){
+                        continue;
+                    }
+                Schema s = new Schema();
+                s.setName(cat);
+                ResultSet ret = databaseMetaData.getTables("", s.getName(), "%", new String[] {"TABLE"});
+                while(ret.next()){
+                    String tn = ret.getString(TableMetaDataEnum.TABLE_NAME.getCode());
+
+                    Table t = grabTable(connection, s.getName(), tn, readDepth);
+                    if(tn.startsWith("BIN$"))
+                        t.setDeleted(true);
+                    s.getTableList().add(t);
+                }
+                if(ret != null){
+                    ret.close();
+                }
+
+                schemaList.add(s);
+
+            }
+            if(rs != null){
+                rs.close();
+            }
+
+        }
+        databaseMetaData = null;
+        db.setSchemaList(schemaList);
+        return db;
+    }
+
+    public Schema grabSchema(Connection connection, String schemaName) throws SQLException{
+        if(connection == null)
+            return null;
+        Schema schema = new Schema();
+
+        java.sql.DatabaseMetaData databaseMetaData = connection.getMetaData();
+        if(databaseMetaData != null){
+            ResultSet rs = databaseMetaData.getCatalogs();
+            while(rs.next()){
+                String cat = rs.getString("TABLE_CAT");
+                if(cat.equalsIgnoreCase(schemaName)){
+                    schema.setName(schemaName);
+                    break;
+                }
             }
         }
-        try (ResultSet fkRs = connectionMetaData.getImportedKeys(schemaName, schemaName, tableName);) {
-            while (fkRs.next()) {
-                Reference reference = new Reference();
-                String fkTable = fkRs.getString("PKTABLE_NAME");
-                String fkColumn = fkRs.getString("PKCOLUMN_NAME");
-                reference.setTable(fkTable);
-                reference.setColumn(fkColumn);
-                reference.setReferenceTo(fkRs.getString("FKCOLUMN_NAME"));
-                reference.setCollection(true);
-                reference.setInverse(false);
-                referenceMap.put(UUID.randomUUID().toString(), reference);
-            }
+        return schema;
+    }
+
+    public ResultSet grabColumnDetails(String schemaName, String tableName, Connection connection) throws SQLException{
+        java.sql.DatabaseMetaData metaData = connection.getMetaData();
+        return metaData.getColumns("", schemaName, tableName, "%");
+    }
+
+    public int grabColumnCount(String schemaName, String tableName, Connection connection) throws SQLException{
+        java.sql.DatabaseMetaData metaData = connection.getMetaData();
+        ResultSet rs = metaData.getColumns("", schemaName, tableName, "%");
+        int count = 0;
+        while(rs.next()){
+            count ++;
         }
-        return referenceMap;
+        return count;
+    }
+
+    /**
+     *
+     * @param connection
+     * @param schemaName
+     * @param tableName
+     * @param readDepth
+     * @return
+     */
+    public Table grabTable(Connection connection, String schemaName, String tableName, ReadDepthEnum readDepth){
+        enrichConnection(connection);
+        Table table = new Table();
+        table.setName(tableName);
+        try{
+            java.sql.DatabaseMetaData meta = connection.getMetaData();
+            ResultSet ret = meta.getTables("", schemaName, tableName, new String[] {"TABLE"});
+            while(ret.next()){
+                String tn = ret.getString(TableMetaDataEnum.TABLE_NAME.getCode());
+                table.setName(tn);
+                table.setSchemaName(schemaName);
+                if(ReadDepthEnum.DEEP.equals(readDepth) || ReadDepthEnum.MEDIUM.equals(readDepth)){
+                    table.setPrimaryKeys(grabPrimaryKeys(connection, schemaName, tableName, readDepth));
+                    table.setImportedKeys(grabImportedKeys(connection, schemaName, tableName, readDepth));
+                    table.setExportedKeys(grabExportedKeys(connection, schemaName, tableName, readDepth));
+                    try{
+                        table.setColumnlist(getColumnList(table, connection, readDepth));
+                    }catch(Exception e){
+                        System.err.println("Table : " + table.getName() );
+                        e.printStackTrace();
+                    }
+                    if(ReadDepthEnum.DEEP.equals(readDepth)){
+                        table.setComments(ret.getString(TableMetaDataEnum.REMARKS.getCode()));
+                    }
+                }
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return table;
     }
 
 
-    private Set<TableMetaData> scanTables(java.sql.DatabaseMetaData connectionMetaData, String schema)
-            throws SQLException {
-        Set<TableMetaData> metaDatas = new HashSet<>();
-        try (ResultSet tableResultSet = connectionMetaData.getTables(schema, schema, "%", new String[] {"TABLE"});) {
-            while (tableResultSet.next()) {
-                String tableName = tableResultSet.getString("TABLE_NAME");
-                TableMetaData tableMetaData = new TableMetaData(tableName);
-                metaDatas.add(tableMetaData);
-            }
+    public List<Column> getColumnList(Table table, Connection connection, ReadDepthEnum readDepth) throws SQLException{
+        enrichConnection(connection);
+        List<Column> list = new ArrayList<Column>();
+        java.sql.DatabaseMetaData databaseMetaData = connection.getMetaData();
+        List<PrimaryKey> pkList = table.getPrimaryKeys();
+        Set<String> pkColSet = new HashSet<String>();
+        for (PrimaryKey pk : pkList) {
+            pkColSet.add(pk.getColumnName());
         }
-        return metaDatas;
+
+        Set<String> fkColSet = new HashSet<String>();
+        List<ForeignKey> importedKeys = table.getImportedKeys();
+        for (ForeignKey fk : importedKeys) {
+            fkColSet.add(fk.getFkColumnName());
+        }
+        ResultSet colRs = databaseMetaData.getColumns("", table.getSchemaName(), table.getName(), "%");
+        ResultSetMetaData rsm = colRs.getMetaData();
+        int cc = rsm.getColumnCount();
+        while(colRs.next()){
+            Column c = new Column();
+            // set the schema name
+            c.setSchemaName(table.getSchemaName());
+            //set table name
+            c.setTableName(table.getName());
+            // set column name
+            c.setName(colRs.getString(ColumnMetaDataEnum.COLUMN_NAME.getCode()));
+            // set PK
+            if(pkColSet.contains(c.getName())){
+                c.setPrimaryKey(true);
+            }
+            // set FK
+            if(fkColSet.contains(c.getName())){
+                c.setForeignKey(true);
+            }
+            // set type name
+            c.setTypeName(colRs.getString(ColumnMetaDataEnum.TYPE_NAME.getCode()));
+            // set nullable
+            String nulAble = colRs.getString(ColumnMetaDataEnum.IS_NULLABLE.getCode());
+            if(ColumnMetaDataEnum.IS_NULLABLE_YES.getCode().equalsIgnoreCase(nulAble)){
+                c.setNullable(true);
+            }else{
+                c.setNullable(false);
+            }
+
+
+            // set size
+            c.setSize(colRs.getInt(ColumnMetaDataEnum.COLUMN_SIZE.getCode()));
+
+
+            if(ReadDepthEnum.DEEP.equals(readDepth)){
+                // set sql type
+                c.setDataType(colRs.getInt(ColumnMetaDataEnum.SQL_DATA_TYPE.getCode()));
+                // set column id
+                c.setColumnID(colRs.getInt(ColumnMetaDataEnum.ORDINAL_POSITION.getCode()));
+                // Precision
+                c.setPrecision(colRs.getInt(ColumnMetaDataEnum.DECIMAL_DIGITS.getCode()));
+                // set default value
+                //c.setDefaultValue(colRs.getString(ColumnMetaDataEnum.COLUMN_DEF.getCode()));
+                // comment
+                c.setComments(colRs.getString(ColumnMetaDataEnum.REMARKS.getCode()));
+            }
+
+            list.add(c);
+        }
+        if(colRs != null){
+            colRs.close();
+        }
+        return list;
     }
 
-    private Set<ColumnMetaData> scanColumns(java.sql.DatabaseMetaData connectionMetaData, String schema,
-            TableMetaData tableMetaData) throws SQLException {
-        Set<ColumnMetaData> metaDatas = new HashSet<>();
-        try (ResultSet tableResultSet = connectionMetaData.getColumns(schema, schema, tableMetaData.getName(), "%");) {
-            while (tableResultSet.next()) {
-                String columnName = tableResultSet.getString("COLUMN_NAME");
-                ColumnMetaData columnMetaData = new ColumnMetaData(columnName);
-                metaDatas.add(columnMetaData);
-            }
+    public List<Column> getColumnList(String schemaName, String tableName, Connection connection, ReadDepthEnum readDepth) throws SQLException{
+        enrichConnection(connection);
+        List<Column> list = new ArrayList<Column>();
+        java.sql.DatabaseMetaData databaseMetaData = connection.getMetaData();
+
+        List<PrimaryKey> pkList = grabPrimaryKeys(connection, schemaName, tableName, readDepth);
+        Set<String> pkColSet = new HashSet<String>();
+        for (PrimaryKey pk : pkList) {
+            pkColSet.add(pk.getColumnName());
         }
-        return metaDatas;
+
+        Set<String> fkColSet = new HashSet<String>();
+        List<ForeignKey> importedKeys = grabImportedKeys(connection, schemaName, tableName, readDepth);
+        for (ForeignKey fk : importedKeys) {
+            fkColSet.add(fk.getFkColumnName());
+        }
+
+        ResultSet colRs = databaseMetaData.getColumns("", schemaName, tableName, "%");
+        ResultSetMetaData rsm = colRs.getMetaData();
+        int cc = rsm.getColumnCount();
+        while(colRs.next()){
+            Column c = new Column();
+            //set schema name
+            c.setSchemaName(schemaName);
+            //set table name
+            c.setTableName(tableName);
+            // set column name
+            c.setName(colRs.getString(ColumnMetaDataEnum.COLUMN_NAME.getCode()));
+            // set PK
+            if(pkColSet.contains(c.getName())){
+                c.setPrimaryKey(true);
+            }
+            // set FK
+            if(fkColSet.contains(c.getName())){
+                c.setForeignKey(true);
+            }
+            // set type name
+            c.setTypeName(colRs.getString(ColumnMetaDataEnum.TYPE_NAME.getCode()));
+            // set nullable
+            String nulAble = colRs.getString(ColumnMetaDataEnum.IS_NULLABLE.getCode());
+            if(ColumnMetaDataEnum.IS_NULLABLE_YES.getCode().equalsIgnoreCase(nulAble)){
+                c.setNullable(true);
+            }else{
+                c.setNullable(false);
+            }
+            // set size
+            c.setSize(colRs.getInt(ColumnMetaDataEnum.COLUMN_SIZE.getCode()));
+            if(ReadDepthEnum.DEEP.equals(readDepth)){
+                // set sql type
+                c.setDataType(colRs.getInt(ColumnMetaDataEnum.SQL_DATA_TYPE.getCode()));
+                // set column id
+                c.setColumnID(colRs.getInt(ColumnMetaDataEnum.ORDINAL_POSITION.getCode()));
+                // Precision
+                c.setPrecision(colRs.getInt(ColumnMetaDataEnum.DECIMAL_DIGITS.getCode()));
+                // set default value
+                //c.setDefaultValue(colRs.getString(ColumnMetaDataEnum.COLUMN_DEF.getCode()));
+                // comment
+                c.setComments(colRs.getString(ColumnMetaDataEnum.REMARKS.getCode()));
+            }
+            list.add(c);
+        }
+        if(colRs != null){
+            colRs.close();
+        }
+        return list;
     }
 
+    /**
+     *
+     * @param connection
+     * @param schemaName
+     * @param tableName
+     * @param readDepth
+     * @return
+     * @throws SQLException
+     */
+    public List<PrimaryKey> grabPrimaryKeys(Connection connection, String schemaName,
+                                            String tableName, ReadDepthEnum readDepth) throws SQLException{
+        List<PrimaryKey> pkList = new ArrayList<PrimaryKey>();
+        java.sql.DatabaseMetaData databaseMetaData = connection.getMetaData();
+        ResultSet pkRs = databaseMetaData.getPrimaryKeys("", schemaName, tableName);
+        while(pkRs.next()){
+            PrimaryKey pk = new PrimaryKey();
+            pk.setColumnName(pkRs.getString(PKMetaDataEnum.COLUMN_NAME.getCode()));
+
+            if(ReadDepthEnum.DEEP.equals(readDepth)){
+                pk.setTableCat(pkRs.getString(PKMetaDataEnum.TABLE_CAT.getCode()));
+                pk.setTableSchem(pkRs.getString(PKMetaDataEnum.TABLE_SCHEM.getCode()));
+                pk.setTableName(tableName);
+                pk.setName(pkRs.getString(PKMetaDataEnum.PK_NAME.getCode()));
+                //pk.setDeleted(pkRs.getBoolean(PKMetaDataEnum.))
+                pk.setKeySeq(pkRs.getShort(PKMetaDataEnum.KEY_SEQ.getCode()));
+                //pk.setComments(pkRs.getString(PKMetaDataEnum.comments))
+            }
+
+            pkList.add(pk);
+        }
+        if(pkRs != null){
+            pkRs.close();
+        }
+        return pkList;
+    }
+
+    public List<ForeignKey> grabImportedKeys(Connection connection, String schemaName, String tableName, ReadDepthEnum readDepth) throws SQLException{
+        java.sql.DatabaseMetaData databaseMetaData = connection.getMetaData();
+        ResultSet fkRs = databaseMetaData.getImportedKeys("", schemaName, tableName);
+        return readFksFromRS(fkRs, true, readDepth);
+    }
+
+    public List<ForeignKey> grabExportedKeys(Connection connection, String schemaName, String tableName, ReadDepthEnum readDepth) throws SQLException{
+        java.sql.DatabaseMetaData databaseMetaData = connection.getMetaData();
+        ResultSet fkRs = databaseMetaData.getExportedKeys("", schemaName, tableName);
+        return readFksFromRS(fkRs, false, readDepth);
+    }
+
+    private List<ForeignKey> readFksFromRS(ResultSet fkRs, Boolean imported, ReadDepthEnum readDepth) throws SQLException{
+        List<ForeignKey> fks = new ArrayList<ForeignKey>();
+
+        while(fkRs.next()){
+            ForeignKey fk = new ForeignKey();
+            fk.setPkColumnName(fkRs.getString(ForeignKeyMetaDataEnum.PKCOLUMN_NAME.getCode()));
+            fk.setFkColumnName(fkRs.getString(ForeignKeyMetaDataEnum.FKCOLUMN_NAME.getCode()));
+            if(ReadDepthEnum.DEEP.equals(readDepth)){
+                fk.setPkTableCat(fkRs.getString(ForeignKeyMetaDataEnum.PKTABLE_CAT.getCode()));
+                fk.setPkTableSchem(fkRs.getString(ForeignKeyMetaDataEnum.PKTABLE_SCHEM.getCode()));
+                fk.setPkTableName(fkRs.getString(ForeignKeyMetaDataEnum.PKTABLE_NAME.getCode()));
+                fk.setFkTableCat(fkRs.getString(ForeignKeyMetaDataEnum.FKTABLE_CAT.getCode()));
+                fk.setFkTableSchem(fkRs.getString(ForeignKeyMetaDataEnum.FKTABLE_SCHEM.getCode()));
+                fk.setFkTableName(fkRs.getString(ForeignKeyMetaDataEnum.FKTABLE_NAME.getCode()));
+                fk.setKeySeq(fkRs.getShort(ForeignKeyMetaDataEnum.KEY_SEQ.getCode()));
+                fk.setUpdateRule(fkRs.getShort(ForeignKeyMetaDataEnum.UPDATE_RULE.getCode()));
+                fk.setDeleteRule(fkRs.getShort(ForeignKeyMetaDataEnum.DELETE_RULE.getCode()));
+                fk.setPkName(fkRs.getString(ForeignKeyMetaDataEnum.PK_NAME.getCode()));
+                fk.setFkName(fkRs.getString(ForeignKeyMetaDataEnum.FK_NAME.getCode()));
+                fk.setDeferrability(fkRs.getShort(ForeignKeyMetaDataEnum.DEFERRABILITY.getCode()));
+            }
+            fk.setImportedKey(imported);
+            fks.add(fk);
+        }
+        if(fkRs != null){
+            fkRs.close();
+        }
+        return fks;
+    }
+
+    public Set<String> getAvailableSchemaNames(
+            Connection connection) throws SQLException {
+        Set<String> schemaNames = new HashSet<String>();
+        if(null == connection)
+            return schemaNames;
+
+        DatabaseMetaData metaData = connection.getMetaData();
+        if(metaData != null){
+            ResultSet rs = metaData.getSchemas();
+            while(rs.next()){
+                String cat = rs.getString("TABLE_SCHEM");
+                schemaNames.add(cat);
+            }
+            if(rs != null){
+                rs.close();
+            }
+        }
+
+        return schemaNames;
+    }
+
+    private void enrichConnection(Connection connection) {
+//		if(connection instanceof OracleConnection)
+//			((OracleConnection)connection).setRemarksReporting(true);
+    }
 
 
 }

@@ -8,6 +8,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.cf.jdbc.json.ext.common.ex.IllegalDataSourceConfiguration;
+import com.cf.jdbc.json.ext.common.model.database.Database;
 import com.cf.jdbc.json.ext.common.utils.StringUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -23,6 +24,8 @@ public class DatabaseMetaData {
     private ScanMode scanMode = ScanMode.NONE;
     private Set<TableMetaData> tables;
     private boolean caseSensitive;
+
+    private Database database;
 
 
     public TableMetaData getTableMetaData(String tableName) {

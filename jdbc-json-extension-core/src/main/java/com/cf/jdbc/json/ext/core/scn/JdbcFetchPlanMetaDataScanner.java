@@ -10,6 +10,7 @@ import com.cf.jdbc.json.ext.common.cfg.meta.ScanMode;
 import com.cf.jdbc.json.ext.common.cfg.model.DataSourceConfig;
 import com.cf.jdbc.json.ext.common.cfg.model.FetchPlanConfig;
 import com.cf.jdbc.json.ext.common.ex.IllegalConfigurationException;
+import com.cf.jdbc.json.ext.common.model.database.Database;
 import com.cf.jdbc.json.ext.common.scn.FetchPlanMetaDataScanner;
 import com.cf.jdbc.json.ext.common.scn.MetaDataScanner;
 
@@ -46,7 +47,7 @@ public abstract class JdbcFetchPlanMetaDataScanner<DSK extends Serializable, FPK
         DataSource dataSource = getDataSource(dataSourceConfiguration);
         MetaDataScanner metaDataScanner =
                 metaDataScannerResolver.resolve(dataSourceConfiguration.getInformation().getType());
-        final DatabaseMetaData databaseMetaData =
+        final Database databaseMetaData =
                 metaDataScanner.scan(dataSourceConfiguration.getConnectionConfig().getDatabaseName(), dataSource,
                         dataSourceConfiguration.getInformation());
         if (null == databaseMetaData) {
@@ -69,22 +70,8 @@ public abstract class JdbcFetchPlanMetaDataScanner<DSK extends Serializable, FPK
     }
 
     protected void updateFetchPlanConfig(final FetchPlanConfig fetchPlanConfiguration,
-            final DatabaseMetaData databaseMetaData) {
-        if (null == fetchPlanConfiguration.getDatabaseMetaData()) {
-            fetchPlanConfiguration.setDatabaseMetaData(databaseMetaData);
-            return;
-        }
-        switch (fetchPlanConfiguration.getDatabaseMetaData().getScanMode()) {
-            case REFRESH:
-                fetchPlanConfiguration.setDatabaseMetaData(databaseMetaData);
-                break;
-            case MERGE:
-                mergeDatabaseMetaData(fetchPlanConfiguration.getDatabaseMetaData(), databaseMetaData);
-                break;
+            final Database database) {
 
-            default:
-                break;
-        }
     }
 
     private void mergeDatabaseMetaData(final DatabaseMetaData fpDatabaseMetaData,
