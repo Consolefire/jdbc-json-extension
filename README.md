@@ -1,7 +1,7 @@
 # Jdbc JSON Extension 
 `jdbc-json-extension` is to fetch data from RDBMS in JSON format. The response data is structured the in the same relation structure of the Tables relationships in the database. The fetch is pre-planned using a `FetchPlan` configuration. The execution is multi-threaded tree pattern where it starts from the `root` table with supplied filter parameters. The subsequent nodes (tables) are fetched as the `One-to-*` relationship defined from the root tables.
 
-__Release Version: `1.4.0`__ available in [Maven central](http://repo1.maven.org/maven2/com/consolefire/)
+__Release Version: `1.4.0`__ available in [Maven central](https://repo1.maven.org/maven2/com/consolefire/)
 
 Build Status: [![CircleCI](https://circleci.com/gh/Consolefire/jdbc-json-extension.svg?style=svg)](https://circleci.com/gh/Consolefire/jdbc-json-extension)
 
